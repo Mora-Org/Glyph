@@ -34,3 +34,7 @@
 {"timestamp":"2026-03-26T18:00:38.370Z","level":"info","message":"HTTP server started, config saved","correlationId":"728d1c1b-07ef-4358-a7fa-a76acc3eb830","tool":"testsprite_bootstrap"}
 {"timestamp":"2026-03-26T18:00:38.904Z","level":"info","message":"GET /init?project_path=c%3A%5CUsers%5Ccesar%5CDocuments%5CGitHub%5CPEG&default_type=frontend 304 5ms","correlationId":"b50fa8bf-7e9f-4a70-b4af-b2f472d22675","tool":"testsprite_bootstrap"}
 {"timestamp":"2026-03-26T18:00:38.979Z","level":"info","message":"GET /api/config?project_path=c%3A%5CUsers%5Ccesar%5CDocuments%5CGitHub%5CPEG 200 2ms","correlationId":"b50fa8bf-7e9f-4a70-b4af-b2f472d22675","tool":"testsprite_bootstrap"}
+{"timestamp":"2026-03-26T18:03:13.594Z","level":"info","message":"commit: {\"file\":\"[object Object]\",\"mode\":\"Frontend\",\"scope\":\"codebase\",\"port\":\"3000\"}","correlationId":"b50fa8bf-7e9f-4a70-b4af-b2f472d22675","tool":"testsprite_bootstrap"}
+{"timestamp":"2026-03-26T18:03:13.596Z","level":"info","message":"POST /api/commit?project_path=c%3A%5CUsers%5Ccesar%5CDocuments%5CGitHub%5CPEG 200 6ms","correlationId":"b50fa8bf-7e9f-4a70-b4af-b2f472d22675","tool":"testsprite_bootstrap"}
+{"timestamp":"2026-03-26T18:03:14.797Z","level":"info","message":"Config committed by user","correlationId":"728d1c1b-07ef-4358-a7fa-a76acc3eb830","tool":"testsprite_bootstrap"}
+{"timestamp":"2026-03-26T18:03:14.803Z","level":"info","message":"Tool invocation completed","correlationId":"728d1c1b-07ef-4358-a7fa-a76acc3eb830","tool":"testsprite_bootstrap"}
