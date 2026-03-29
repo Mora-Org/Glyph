@@ -1,0 +1,813 @@
+[
+  {
+    "id": "TC001",
+    "title": "Create a new project from the Dashboard and open the Editor",
+    "description": "Verifies a user can create a project from the Dashboard and reach the Editor view.",
+    "category": "Create Project",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the project name field with Test Project 001"
+      },
+      {
+        "type": "action",
+        "description": "Submit the create project action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the editor layout is displayed with an asset sidebar, a canvas area, and a scene list"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Project name is required when creating a project",
+    "description": "Verifies the Dashboard prevents creating a project when the name is empty.",
+    "category": "Create Project",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the project name field with "
+      },
+      {
+        "type": "action",
+        "description": "Submit the create project action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a required-name validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Dashboard primary content loads when no project exists",
+    "description": "Verifies the Dashboard shows its primary new-project entry point.",
+    "category": "Create Project",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the dashboard shows a new project creation card"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Editor primary layout loads",
+    "description": "Verifies the Editor shows the core regions after a project is created.",
+    "category": "Canvas Editor",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the project name field with Test Project 002"
+      },
+      {
+        "type": "action",
+        "description": "Submit the create project action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the editor layout is displayed with an asset sidebar, a canvas area, and a scene list"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Canvas selection and transform handles appear for an added canvas element",
+    "description": "Verifies selecting an element on the canvas shows selection/transform controls.",
+    "category": "Canvas Editor",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the project name field with Test Project 003"
+      },
+      {
+        "type": "action",
+        "description": "Submit the create project action"
+      },
+      {
+        "type": "action",
+        "description": "Drag and drop an image file from the OS onto the canvas"
+      },
+      {
+        "type": "action",
+        "description": "Click the newly added canvas element"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected canvas element shows selection or transform handles"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Unsupported file types are rejected when dropped onto the canvas",
+    "description": "Verifies dragging an unsupported file onto the canvas does not add a new element.",
+    "category": "Canvas Editor",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the project name field with Test Project 004"
+      },
+      {
+        "type": "action",
+        "description": "Submit the create project action"
+      },
+      {
+        "type": "action",
+        "description": "Drag and drop an unsupported file type from the OS onto the canvas"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no new canvas element is added"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Asset sidebar can add a local folder and display filtered assets",
+    "description": "Verifies selecting a local folder populates the asset list in the sidebar.",
+    "category": "Asset Sidebar",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the project name field with Test Project 005"
+      },
+      {
+        "type": "action",
+        "description": "Submit the create project action"
+      },
+      {
+        "type": "action",
+        "description": "Click the add folder control in the asset sidebar"
+      },
+      {
+        "type": "action",
+        "description": "Select a local folder in the folder picker"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a list of assets is displayed in the asset sidebar"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Drag an asset from the sidebar onto the canvas adds a canvas element",
+    "description": "Verifies an asset can be dragged from the sidebar into the canvas to create an element.",
+    "category": "Asset Sidebar",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the project name field with Test Project 006"
+      },
+      {
+        "type": "action",
+        "description": "Submit the create project action"
+      },
+      {
+        "type": "action",
+        "description": "Click the add folder control in the asset sidebar"
+      },
+      {
+        "type": "action",
+        "description": "Select a local folder in the folder picker"
+      },
+      {
+        "type": "action",
+        "description": "Drag an asset from the asset sidebar onto the canvas"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a new canvas element appears"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Canceling folder selection does not add assets to the sidebar",
+    "description": "Verifies canceling the folder picker leaves the asset sidebar unchanged.",
+    "category": "Asset Sidebar",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the project name field with Test Project 007"
+      },
+      {
+        "type": "action",
+        "description": "Submit the create project action"
+      },
+      {
+        "type": "action",
+        "description": "Click the add folder control in the asset sidebar"
+      },
+      {
+        "type": "action",
+        "description": "Cancel the folder picker"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no assets are added to the asset sidebar"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Add and activate a new scene from the scene list",
+    "description": "Verifies a user can add a new scene and make it active so the canvas updates to that scene.",
+    "category": "Scene Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a new scene in the horizontal scene list"
+      },
+      {
+        "type": "action",
+        "description": "Click the newly added scene in the scene list to make it active"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the canvas updates to reflect the newly active scene"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Reorder scenes via drag-and-drop in the scene list",
+    "description": "Verifies scenes can be reordered in the horizontal scene list and the new order persists visually.",
+    "category": "Scene Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a new scene in the horizontal scene list"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add another new scene in the horizontal scene list"
+      },
+      {
+        "type": "action",
+        "description": "Drag the last scene in the scene list to the first position"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the visual order of scenes in the list reflects the new arrangement"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Toggle transition type between two scenes",
+    "description": "Verifies the transition badge between scenes can be toggled and the chosen transition is reflected in the UI.",
+    "category": "Scene Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a new scene in the horizontal scene list"
+      },
+      {
+        "type": "action",
+        "description": "Click the transition badge between two adjacent scenes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the transition type indicator between the scenes changes"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Add a black-screen pause and preview it on the canvas",
+    "description": "Verifies a black-screen active pause can be inserted and previewed by selecting its block in the list.",
+    "category": "Scene Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a pause in the scene list"
+      },
+      {
+        "type": "action",
+        "description": "Choose the black-screen pause option from the pause menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the newly added pause block in the scene list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the canvas displays a full-canvas pause preview"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Pause duration is not editable after creation (black-screen pause)",
+    "description": "Verifies that after creating a pause, the UI does not allow changing its duration.",
+    "category": "Scene Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a pause in the scene list"
+      },
+      {
+        "type": "action",
+        "description": "Choose the black-screen pause option from the pause menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the pause block in the scene list"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to change the pause duration using any available duration control in the timeline/UI"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no duration editing control is available or any attempted change is not applied"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Preview VHS pause on the canvas",
+    "description": "Verifies a VHS active pause can be inserted and previews as an animated noise effect on the canvas.",
+    "category": "Active Pauses",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a pause in the scene list"
+      },
+      {
+        "type": "action",
+        "description": "Choose the VHS pause option from the pause menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the VHS pause block in the scene list to preview it"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a VHS-style noise animation fills the canvas during preview"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Solid-color pause fills the canvas during preview",
+    "description": "Verifies a solid-color active pause can be added and displays as a full-canvas solid color when selected.",
+    "category": "Active Pauses",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a pause in the scene list"
+      },
+      {
+        "type": "action",
+        "description": "Choose the solid-color pause option from the pause menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the solid-color pause block in the scene list to preview it"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the canvas displays a full-canvas solid color pause preview"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Pause duration is not editable after creation (solid-color pause)",
+    "description": "Verifies that a solid-color pause duration cannot be modified after it is created.",
+    "category": "Active Pauses",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a pause in the scene list"
+      },
+      {
+        "type": "action",
+        "description": "Choose the solid-color pause option from the pause menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the pause block in the scene list"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to change the pause duration using any available duration control in the timeline/UI"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no duration editing control is available or any attempted change is not applied"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Element timeline appears after adding an element and supports start/end handle edits",
+    "description": "Verifies the element timeline panel appears when a scene has elements and adjusting handles changes the element visibility window.",
+    "category": "Element Timeline",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Add a text element to the active scene's canvas"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the element timeline panel is displayed below the canvas"
+      },
+      {
+        "type": "action",
+        "description": "Drag the left handle of the element track to adjust the start time"
+      },
+      {
+        "type": "action",
+        "description": "Drag the right handle of the element track to adjust the end time"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the element visibility updates according to the adjusted start and end times"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Element timeline is absent or shows empty state when scene has no elements",
+    "description": "Verifies the UI does not show element tracks when the active scene contains no elements.",
+    "category": "Element Timeline",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a new scene in the horizontal scene list"
+      },
+      {
+        "type": "action",
+        "description": "Click the newly added scene to make it active"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the element timeline panel is not shown or an empty state is displayed for a scene with no elements"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Open the Lettering panel from the editor header",
+    "description": "Verifies the user can open the lettering panel from the main page.",
+    "category": "Lettering Engine",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the header control to open the lettering panel"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the lettering panel is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Add text, style it, animate it, and split into individual characters",
+    "description": "Verifies a full lettering workflow from adding text to splitting it into per-character elements on the canvas.",
+    "category": "Lettering Engine",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the header control to open the lettering panel"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a text element to the canvas"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the text field with Test Split Text"
+      },
+      {
+        "type": "action",
+        "description": "Select a different font family from the font dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Adjust the font size via the font size slider"
+      },
+      {
+        "type": "action",
+        "description": "Pick a new text color via the color picker"
+      },
+      {
+        "type": "action",
+        "description": "Select an animation effect other than none"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to split the text into individual letters"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the canvas displays the text as individual character elements"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Prevent adding text when no active scene is selected",
+    "description": "Verifies the app prompts the user to select or create an active scene before adding text.",
+    "category": "Lettering Engine",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the header control to open the lettering panel"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a text element to the canvas"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a prompt is shown to select or create an active scene before adding text"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Change font family for an existing text element",
+    "description": "Verifies changing the font dropdown updates the selected text element.",
+    "category": "Lettering Engine",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the header control to open the lettering panel"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a text element to the canvas"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the text field with Font Swap"
+      },
+      {
+        "type": "action",
+        "description": "Select a different font family from the font dropdown"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the canvas shows the text with the newly selected font family"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Adjust font size for an existing text element",
+    "description": "Verifies changing the font size slider updates the selected text element size.",
+    "category": "Lettering Engine",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the header control to open the lettering panel"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a text element to the canvas"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the text field with Size Change"
+      },
+      {
+        "type": "action",
+        "description": "Adjust the font size via the font size slider"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the canvas shows the text at the updated size"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Change text color using the color picker",
+    "description": "Verifies the color picker updates the selected text element color on the canvas.",
+    "category": "Lettering Engine",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the header control to open the lettering panel"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a text element to the canvas"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the text field with Color Change"
+      },
+      {
+        "type": "action",
+        "description": "Pick a new text color via the color picker"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the canvas shows the text in the newly selected color"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Switch animation effect between options",
+    "description": "Verifies selecting a different animation effect updates the selected text element animation state.",
+    "category": "Lettering Engine",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the header control to open the lettering panel"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a text element to the canvas"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the text field with Animate Me"
+      },
+      {
+        "type": "action",
+        "description": "Select an animation effect"
+      },
+      {
+        "type": "action",
+        "description": "Select a different animation effect"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected text element reflects the most recently chosen animation effect"
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "Split only after text exists in the text field",
+    "description": "Verifies the split action is prevented or blocked when there is no text to split.",
+    "category": "Lettering Engine",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the header control to open the lettering panel"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to add a text element to the canvas"
+      },
+      {
+        "type": "action",
+        "description": "Fill text into the text field with "
+      },
+      {
+        "type": "action",
+        "description": "Click the control to split the text into individual letters"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the app prevents splitting and shows an inline validation or disabled-action state"
+      }
+    ]
+  }
+]

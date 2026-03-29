@@ -7,10 +7,14 @@ import Input from './Input';
 
 export default function Dashboard() {
   const createProject = useProjectStore((s) => s.createProject);
-  const [name, setName] = useState('');
+  const [name, setName]       = useState('');
+  const [touched, setTouched] = useState(false);
+
+  const isEmpty = touched && !name.trim();
 
   function handleCreate(e: React.FormEvent) {
     e.preventDefault();
+    setTouched(true);
     if (!name.trim()) return;
     createProject(name.trim());
   }
@@ -32,15 +36,25 @@ export default function Dashboard() {
       >
         <h2 className="text-lg font-semibold">Novo Projeto</h2>
 
-        <Input
-          label="Nome do projeto"
-          placeholder="ex: Ensaio Verão 2026"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          autoFocus
-        />
+        <div className="flex flex-col gap-1">
+          <Input
+            label="Nome do projeto"
+            placeholder="ex: Ensaio Verão 2026"
+            value={name}
+            onChange={(e) => { setName(e.target.value); setTouched(true); }}
+            onBlur={() => setTouched(true)}
+            autoFocus
+            aria-required="true"
+            aria-invalid={isEmpty}
+          />
+          {isEmpty && (
+            <p className="text-xs text-red-400 font-mono" role="alert">
+              O nome do projeto é obrigatório.
+            </p>
+          )}
+        </div>
 
-        <Button variant="primary" size="lg" type="submit" disabled={!name.trim()}>
+        <Button variant="primary" size="lg" type="submit">
           Criar Projeto
         </Button>
       </form>

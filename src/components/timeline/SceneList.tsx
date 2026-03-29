@@ -38,7 +38,23 @@ function SceneItem({ scene, isActive, onClick }: {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} className="flex items-center">
+      {/* Handle de drag visível */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="flex flex-col gap-0.5 px-1 py-2 cursor-grab active:cursor-grabbing opacity-30 hover:opacity-70 transition-opacity"
+        aria-label="Arrastar cena"
+        title="Arrastar para reordenar"
+      >
+        {[0,1,2].map((i) => (
+          <div key={i} className="flex gap-0.5">
+            <div className="w-0.5 h-0.5 rounded-full bg-white" />
+            <div className="w-0.5 h-0.5 rounded-full bg-white" />
+          </div>
+        ))}
+      </div>
+
       <button
         onClick={onClick}
         className={`
@@ -78,10 +94,25 @@ function PauseItem({ pause }: { pause: ActivePause }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} className="flex items-center">
+      <div
+        {...attributes}
+        {...listeners}
+        className="flex flex-col gap-0.5 px-1 py-2 cursor-grab active:cursor-grabbing opacity-30 hover:opacity-70 transition-opacity"
+        aria-label="Arrastar pausa"
+        title="Arrastar para reordenar"
+      >
+        {[0,1,2].map((i) => (
+          <div key={i} className="flex gap-0.5">
+            <div className="w-0.5 h-0.5 rounded-full bg-white" />
+            <div className="w-0.5 h-0.5 rounded-full bg-white" />
+          </div>
+        ))}
+      </div>
+
       <div className={`
         flex flex-col items-start px-3 py-2 rounded-lg w-20 flex-shrink-0
-        glass border cursor-grab ${pauseColors[pause.type]}
+        glass border ${pauseColors[pause.type]}
       `}>
         <span className="text-[9px] font-mono font-bold">{pauseLabels[pause.type]}</span>
         <span className="text-[9px] font-mono mt-0.5 opacity-60">{pause.duration}s</span>

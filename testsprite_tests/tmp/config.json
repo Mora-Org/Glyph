@@ -2,5 +2,23 @@
   "status": "commited",
   "type": "frontend",
   "scope": "codebase",
-  "localEndpoint": "http://localhost:3000"
+  "localEndpoint": "http://localhost:3000",
+  "executionArgs": {
+    "projectName": "PEG",
+    "projectPath": "c:\\Users\\cesar\\Documents\\GitHub\\PEG",
+    "testIds": [
+      "TC002",
+      "TC011",
+      "TC020",
+      "TC021",
+      "TC022"
+    ],
+    "additionalInstruction": "Focus on verifying: TC002 now shows a visible validation error message when submitting empty project name. TC011 now has visible drag handles (3x2 dot grid) on scene and pause items. TC020 and TC022 should first create a project before testing the Lettering panel.",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-QUosImtjfNW6CqNROfRPTvl_2F9AfUMyDCa-zRwrfPuPVwsa_yCAxXQpQRm_ABXBqMCgV2tkT4FVhoXXOviZBPgO40ogAeo8foKsnZ4ka5Klwhru-Vfxwzur-BaBJrqIQcE"
+    }
+  },
+  "serverPort": 50270,
+  "proxy": "http://4ca514e7-e8ef-4495-8869-5e184f8edbb4:2a3xjgMeVy1We1g2Hw6rsuPJm2wHZyzu@tun.testsprite.com:8080"
 }

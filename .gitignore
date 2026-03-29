@@ -23,3 +23,10 @@ src-tauri/bin/
 # OS
 .DS_Store
 Thumbs.db
+
+planos/
+planos/plano_implementacao_2026-03-26_v1.md
+tarefas.md
+team_guide.md
+CLAUDE.md
+s
