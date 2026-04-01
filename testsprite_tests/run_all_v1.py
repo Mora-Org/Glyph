@@ -1,5 +1,5 @@
 """
-run_all_v1.py — Suite completa de testes PEG v1.0
+run_all_v1.py — Suite completa de testes Glyph v0.6 (by Mora)
 Roda todos os TCs manuais em sequência e gera um relatório de resultados.
 
 Uso:
