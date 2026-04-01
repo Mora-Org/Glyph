@@ -75,7 +75,7 @@ export default function ActivePauseCanvas({ pause, width, height }: ActivePauseC
       <canvas ref={canvasRef} width={width} height={height} />
 
       {/* Label da pausa */}
-      <div className="absolute bottom-4 left-4 glass px-3 py-1 rounded-lg">
+      <div className="absolute bottom-4 left-4 glass px-3 py-1 rounded-lg" data-testid="pause-label">
         <span className="text-xs font-mono text-white/50">
           {pause.type === 'black' && 'Tela Preta'}
           {pause.type === 'vhs'   && 'Ruído VHS'}

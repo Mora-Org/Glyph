@@ -7,8 +7,8 @@ Este arquivo rastreia o progresso macro das fases do projeto **Glyph (v1.4)**.
 - [x] **Fase 1: Fundação** (Design System, Store, Dashboard)
 - [x] **Fase 2: Motor do Canvas** (Fabric.js, Imagens/Vídeos, Transformações)
 - [x] **Fase 3: Cenas e Timeline** (Reordenação, Pausas Ativas, Transições)
-- [/] **Fase 4: Tipografia & GIF** (Lettering Split, GIFs, Efeitos) — **EM TESTES**
-- [/] **Fase 5: Exportação** (FFmpeg Pipeline, GPU Detection) — **EM DESENVOLVIMENTO**
+- [x] **Fase 4: Tipografia & GIF** (Lettering Split, GIFs, Efeitos) — **CONCLUÍDA** *(TC011/TC021/TC022 corrigidos; TC021_manual: PASSOU)*
+- [/] **Fase 5: Exportação** (FFmpeg Pipeline, GPU Detection) — **EM TESTES** *(UI + mock: TC028 PASSOU; integração real FFmpeg pendente)*
 - [ ] **Fase 6: Branding & Refactor** (Migração oficial para Glyph e Identidade Mora)
 - [ ] **Fase 7: Áudio & Sync** (Avançado: Noise Removal, Multi-track)
 - [ ] **Fase 8: Ferramentas Artísticas** (Avançado: Eraser Tool, Clipping Masks, HSL)

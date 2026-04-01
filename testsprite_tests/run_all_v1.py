@@ -24,7 +24,8 @@ TEST_FILES = [
     "TC021_manual.py",
     # Fase 5 — Exportação
     "TC028_Export_modal_opens_and_completes_mock_render.py",
-    # Adicionar novos TCs aqui conforme as fases avançarem
+    # v1.0 Mega-teste — Fases 1-5 em sequência
+    "TC100_mega_v1_all_phases.py",
 ]
 
 BASE_DIR = Path(__file__).parent
