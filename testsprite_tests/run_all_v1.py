@@ -62,7 +62,7 @@ async def run_test_file(path: Path) -> tuple[str, bool, str]:
 
 async def main_async():
     print(f"\n{BOLD}{'='*55}{RESET}")
-    print(f"{BOLD}  Glyph v1.4 (by Mora) — Suite Completa de Testes{RESET}")
+    print(f"{BOLD}  Glyph v0.6 (by Mora) — Suite Completa de Testes{RESET}")
     print(f"{'='*55}\n")
 
     results = []

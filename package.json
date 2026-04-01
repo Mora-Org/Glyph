@@ -1,6 +1,6 @@
 {
   "name": "glyph",
-  "version": "1.4.0",
+  "version": "0.6.0",
   "description": "Glyph by Mora — Software de autoria visual com controle estético granular",
   "private": true,
   "scripts": {
