@@ -1,7 +1,7 @@
 {
-  "name": "peg",
-  "version": "0.1.0",
-  "description": "Visual Essay Generator for Desktop",
+  "name": "glyph",
+  "version": "1.4.0",
+  "description": "Glyph by Mora — Software de autoria visual com controle estético granular",
   "private": true,
   "scripts": {
     "dev": "next dev",

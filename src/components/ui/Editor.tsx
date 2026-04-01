@@ -78,7 +78,7 @@ export default function Editor() {
 
         {/* Header */}
         <header className="flex items-center justify-between px-4 py-2 border-b border-white/8 flex-shrink-0">
-          <span className="font-black tracking-tighter text-lg">PEG</span>
+          <span className="font-black tracking-tighter text-lg">Glyph</span>
           <span className="text-xs font-mono text-white/40">{project.name}</span>
           <div className="flex items-center gap-2">
             <button

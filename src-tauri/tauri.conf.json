@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "PEG",
-  "version": "0.1.0",
-  "identifier": "com.peg.app",
+  "productName": "Glyph",
+  "version": "1.4.0",
+  "identifier": "com.mora.glyph",
   "build": {
     "frontendDist": "../out",
     "devUrl": "http://localhost:3000",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "PEG — Gerador de Ensaios Visuais",
+        "title": "Glyph — O Respiro do Ensaio Visual",
         "width": 1440,
         "height": 900,
         "resizable": true,

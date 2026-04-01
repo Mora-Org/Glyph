@@ -23,9 +23,9 @@ export default function Dashboard() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-surface p-8">
       {/* Logo */}
       <div className="mb-12 text-center">
-        <h1 className="text-7xl font-black tracking-tighter leading-none">PEG</h1>
+        <h1 className="text-7xl font-black tracking-tighter leading-none">Glyph</h1>
         <p className="mt-3 text-sm font-mono text-white/40 uppercase tracking-widest">
-          Gerador de Ensaios Visuais
+          by Mora — O Respiro do Ensaio Visual
         </p>
       </div>
 
