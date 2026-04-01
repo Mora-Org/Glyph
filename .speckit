@@ -1,0 +1,89 @@
+# .speckit — PEG: Gerador de Ensaios Visuais
+
+## Identidade do Produto
+PEG é um aplicativo desktop open-source para criação de ensaios visuais e apresentações com controle estético granular. Não é um editor de vídeo linear — é uma ferramenta de composição expressiva com foco em lettering dinâmico e tipografia.
+
+## Stack
+- Desktop: Tauri (Rust)
+- UI: Next.js (Static Export) + React + TypeScript
+- Canvas: Fabric.js + @dnd-kit/core
+- Estado: Zustand (JSON serializado)
+- Renderização: FFmpeg (via comandos Tauri)
+- Testes: Playwright (E2E) + TestSprite (QA)
+
+## Estrutura de Pastas
+```
+src/                  # Frontend (Next.js)
+  app/                # App Router
+  components/
+    canvas/           # Lógica Fabric.js
+    timeline/         # UI de cenas e sequenciamento
+    typography/       # Lettering e efeitos
+    ui/               # Componentes compartilhados
+  hooks/              # Hooks para Tauri/FFmpeg
+  store/              # Zustand — projectStore.ts
+  utils/
+    ffmpeg/           # Builders de comandos FFmpeg
+    parsers/          # Cena ↔ JSON
+src-tauri/            # Backend (Rust)
+  src/main.rs         # Comandos Tauri
+  tauri.conf.json
+planos/               # Documentação viva (Antigravity)
+fixes/                # Patch notes e bug fixes
+tests/                # Suítes TestSprite
+```
+
+## Fases de Desenvolvimento
+| Fase | Descrição | Status |
+|------|-----------|--------|
+| 0 | Setup & Ambiente | ✅ OK |
+| 1 | Fundação & Workspace | ✅ OK |
+| 2 | Motor do Canvas (Fabric.js) | ✅ OK |
+| 3 | Cenas & Timeline | ✅ OK |
+| 4 | Tipografia & GIFs | 🔄 Em testes |
+| 5 | Pipeline de Exportação (FFmpeg) | ⬜ Próxima |
+| 6 | Audio Engine & Sync | ⬜ Avançado |
+| 7 | Ferramentas Artísticas | ⬜ Avançado |
+
+## Features Implementadas (v1.3.1)
+- Lettering Engine: split de string em caracteres individuais com kerning
+- Suporte a GIFs animados (gifler)
+- Filtros dinâmicos: Tremor, Neon, Ticker (aguardando validação)
+- Cenas de conteúdo com transições Cut/Fade
+- Pausas Ativas: Preto, VHS/Estático, Cor Sólida
+- Timeline interna com tracks de visibilidade
+- Suporte a imagens (.png, .jpg) e vídeo no canvas
+- Transformações sincronizadas com o Store Zustand
+
+## Próximas Features (Fase 5)
+- Mapeamento FFmpeg: converter cenas JSON em argumentos `-vf`
+- Bridge de exportação com progresso real (Rust)
+- Detecção automática de GPU (NVENC/AMF vs CPU)
+
+## Princípios
+- Preview: filtros CSS; Exportação: FFmpeg equivalente
+- Estado do projeto serializado como JSON
+- Comandos FFmpeg construídos via builders em `src/utils/ffmpeg/`
+- Não mockar comandos Tauri em testes de integração
+- Não adicionar complexidade além do pedido
+- Rodar TestSprite antes de avançar de fase
+
+## Equipe
+- César (Boss): visão e decisão final
+- Antigravity: planejamento, arquitetura, `planos/tarefas.md`
+- Claude Code: implementação
+- TestSprite: QA e validação
+
+## Comandos
+```bash
+npm install           # Dependências
+npm run dev           # Next.js dev (frontend isolado)
+npm run tauri dev     # App completo
+npm run tauri build   # Build de produção
+npm run test:unit
+npm run test:integration
+```
+
+## Formatos de Saída
+- `.mp4`, `.mov`
+- Plataformas: Windows e Linux

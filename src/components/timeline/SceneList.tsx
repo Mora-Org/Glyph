@@ -191,6 +191,8 @@ export default function SceneList() {
       <div className="flex items-center gap-1 ml-3 flex-shrink-0">
         <button
           onClick={addScene}
+          aria-label="Adicionar cena"
+          data-testid="add-scene"
           className="glass px-2 py-1.5 rounded-lg text-[10px] font-mono text-white/40 hover:text-white border border-white/8 hover:border-white/20 transition-all"
         >
           + Cena
@@ -200,6 +202,8 @@ export default function SceneList() {
         <div className="relative">
           <button
             onClick={() => setShowPauseMenu((v) => !v)}
+            aria-label="Adicionar pausa"
+            data-testid="add-pause"
             className="glass px-2 py-1.5 rounded-lg text-[10px] font-mono text-white/40 hover:text-white border border-white/8 hover:border-white/20 transition-all"
           >
             + Pausa

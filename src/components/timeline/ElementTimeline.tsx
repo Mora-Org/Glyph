@@ -59,6 +59,40 @@ export default function ElementTimeline({ scene }: ElementTimelineProps) {
     [scene, updateElement]
   );
 
+  // Teclado para handle esquerdo (startTime) — lê valores frescos do store via getter
+  function keyStart(el: SceneElement, e: React.KeyboardEvent) {
+    const STEP = 0.1;
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    const fresh = useProjectStore.getState().project?.timeline
+      .flatMap((i) => ('elements' in i ? (i as Scene).elements : []))
+      .find((x) => x.id === el.id) ?? el;
+    if (e.key === 'ArrowRight') {
+      const newStart = Math.min(fresh.endTime - MIN_DUR, fresh.startTime + STEP);
+      updateElement(scene.id, el.id, { startTime: Math.round(newStart * 100) / 100 });
+    } else {
+      const newStart = Math.max(0, fresh.startTime - STEP);
+      updateElement(scene.id, el.id, { startTime: Math.round(newStart * 100) / 100 });
+    }
+  }
+
+  // Teclado para handle direito (endTime) — lê valores frescos do store via getter
+  function keyEnd(el: SceneElement, e: React.KeyboardEvent) {
+    const STEP = 0.1;
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    const fresh = useProjectStore.getState().project?.timeline
+      .flatMap((i) => ('elements' in i ? (i as Scene).elements : []))
+      .find((x) => x.id === el.id) ?? el;
+    if (e.key === 'ArrowRight') {
+      const newEnd = Math.min(scene.duration, fresh.endTime + STEP);
+      updateElement(scene.id, el.id, { endTime: Math.round(newEnd * 100) / 100 });
+    } else {
+      const newEnd = Math.max(fresh.startTime + MIN_DUR, fresh.endTime - STEP);
+      updateElement(scene.id, el.id, { endTime: Math.round(newEnd * 100) / 100 });
+    }
+  }
+
   // Drag do handle direito (endTime)
   const dragEnd = useCallback(
     (el: SceneElement, e: React.MouseEvent) => {
@@ -144,16 +178,34 @@ export default function ElementTimeline({ scene }: ElementTimelineProps) {
                 >
                   {/* Handle esquerdo (startTime) */}
                   <div
-                    onMouseDown={(e) => dragStart(el, e)}
-                    className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize flex items-center justify-center rounded-l"
+                    role="slider"
+                    aria-label={`Ajustar início de ${el.id}`}
+                    aria-valuenow={el.startTime}
+                    aria-valuemin={0}
+                    aria-valuemax={el.endTime}
+                    tabIndex={0}
+                    data-testid={`handle-start-${el.id}`}
+                    onMouseDown={(e) => { (e.currentTarget as HTMLElement).focus(); dragStart(el, e); }}
+                    onKeyDown={(e) => keyStart(el, e)}
+                    className="absolute left-0 top-0 bottom-0 w-3 cursor-ew-resize flex items-center justify-center rounded-l focus:outline-none focus:ring-1 focus:ring-white/40"
+                    title="Arrastar para ajustar início"
                   >
                     <div className="w-0.5 h-3 bg-black/40 rounded" />
                   </div>
 
                   {/* Handle direito (endTime) */}
                   <div
-                    onMouseDown={(e) => dragEnd(el, e)}
-                    className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize flex items-center justify-center rounded-r"
+                    role="slider"
+                    aria-label={`Ajustar fim de ${el.id}`}
+                    aria-valuenow={el.endTime}
+                    aria-valuemin={el.startTime}
+                    aria-valuemax={scene.duration}
+                    tabIndex={0}
+                    data-testid={`handle-end-${el.id}`}
+                    onMouseDown={(e) => { (e.currentTarget as HTMLElement).focus(); dragEnd(el, e); }}
+                    onKeyDown={(e) => keyEnd(el, e)}
+                    className="absolute right-0 top-0 bottom-0 w-3 cursor-ew-resize flex items-center justify-center rounded-r focus:outline-none focus:ring-1 focus:ring-white/40"
+                    title="Arrastar para ajustar fim"
                   >
                     <div className="w-0.5 h-3 bg-black/40 rounded" />
                   </div>

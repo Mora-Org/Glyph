@@ -5,20 +5,16 @@
   "localEndpoint": "http://localhost:3000",
   "executionArgs": {
     "projectName": "PEG",
-    "projectPath": "c:\\Users\\cesar\\Documents\\GitHub\\PEG",
+    "projectPath": "c:/Users/cesar/Documents/GitHub/PEG",
     "testIds": [
-      "TC002",
-      "TC011",
-      "TC020",
-      "TC021",
-      "TC022"
+      "TC021"
     ],
-    "additionalInstruction": "Focus on verifying: TC002 now shows a visible validation error message when submitting empty project name. TC011 now has visible drag handles (3x2 dot grid) on scene and pause items. TC020 and TC022 should first create a project before testing the Lettering panel.",
+    "additionalInstruction": "Re-running TC021 with updated test code that now correctly clicks the handle and then presses ArrowRight 5 times. The handle has onKeyDown that updates startTime by 0.1s per press. Verify aria-valuenow changes from 0 after the key presses.",
     "serverMode": "development",
     "envs": {
       "API_KEY": "sk-user-QUosImtjfNW6CqNROfRPTvl_2F9AfUMyDCa-zRwrfPuPVwsa_yCAxXQpQRm_ABXBqMCgV2tkT4FVhoXXOviZBPgO40ogAeo8foKsnZ4ka5Klwhru-Vfxwzur-BaBJrqIQcE"
     }
   },
-  "serverPort": 50270,
-  "proxy": "http://4ca514e7-e8ef-4495-8869-5e184f8edbb4:2a3xjgMeVy1We1g2Hw6rsuPJm2wHZyzu@tun.testsprite.com:8080"
+  "serverPort": 60939,
+  "proxy": "http://1770e34b-130f-482f-894f-ebae97907ea0:ZofiwhARiu42b40Nv6DwsEo4KTmSZPoI@tun.testsprite.com:8080"
 }

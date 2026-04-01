@@ -10,6 +10,7 @@ import Button from '@/components/ui/Button';
 import SceneList from '@/components/timeline/SceneList';
 import ElementTimeline from '@/components/timeline/ElementTimeline';
 import LetteringPanel from '@/components/typography/LetteringPanel';
+import ExportModal from '@/components/ui/ExportModal';
 
 const CANVAS_W = 1280;
 const CANVAS_H = 720;
@@ -20,6 +21,7 @@ export default function Editor() {
 
   const [opacity, setOpacity]         = useState(1);
   const [showLettering, setLettering] = useState(false);
+  const [showExport, setShowExport]   = useState(false);
   const prevSceneId                   = useRef<string | null>(null);
   const canvasRef = useRef<MainCanvasHandle | null>(null);
 
@@ -53,6 +55,9 @@ export default function Editor() {
 
   return (
     <div className="flex h-screen w-screen bg-[#0a0a0a] text-white overflow-hidden">
+      {showExport && (
+        <ExportModal projectName={project.name} onClose={() => setShowExport(false)} />
+      )}
 
       {/* Sidebar de assets */}
       <AssetSidebar />
@@ -82,7 +87,7 @@ export default function Editor() {
             >
               ✦ Lettering
             </button>
-            <Button variant="primary" size="sm">Exportar</Button>
+            <Button variant="primary" size="sm" onClick={() => setShowExport(true)}>Exportar</Button>
           </div>
         </header>
 

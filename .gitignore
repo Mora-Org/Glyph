@@ -24,9 +24,9 @@ src-tauri/bin/
 .DS_Store
 Thumbs.db
 
-planos/
-planos/plano_implementacao_2026-03-26_v1.md
-tarefas.md
-team_guide.md
-CLAUDE.md
-s
+# Python
+__pycache__/
+*.pyc
+
+# TestSprite — outputs temporários
+testsprite_tests/tmp/
