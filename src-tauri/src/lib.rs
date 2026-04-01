@@ -1,8 +1,5 @@
-// Comando de teste para validar a bridge JS <-> Rust
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("PEG bridge OK — olá, {}!", name)
-}
+mod gpu;
+mod export;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -17,7 +14,12 @@ pub fn run() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![
+            gpu::detect_gpu_encoder,
+            export::write_frames,
+            export::export_video,
+            export::cleanup_frames,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

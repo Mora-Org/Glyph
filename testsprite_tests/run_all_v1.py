@@ -14,6 +14,10 @@ import sys
 import time
 from pathlib import Path
 
+# Garante UTF-8 no terminal Windows
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
 # ── TCs manuais a rodar (em ordem de fase) ─────────────────────────────────
 TEST_FILES = [
     # Fase 4 — Tipografia & GIF

@@ -51,7 +51,7 @@ async def run_test():
         assert float(valor_depois) > 0, \
             f"FALHOU: startTime deveria ter aumentado, mas é {valor_depois}"
 
-        print(f"✅ PASSOU! startTime mudou de {valor_antes} para {valor_depois}")
+        print(f"PASSOU! startTime mudou de {valor_antes} para {valor_depois}")
 
         await browser.close()
 

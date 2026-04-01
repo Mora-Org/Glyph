@@ -42,7 +42,8 @@ async def run_test():
         await expect(page.get_by_role("button", name="Abrir Pasta")).to_be_visible()
 
         print("8. Fechando modal...")
-        await page.get_by_role("button", name="Fechar").click()
+        # Usa o botão de texto "Fechar" (não o ✕ do header)
+        await page.get_by_role("button", name="Fechar").last.click()
         await page.wait_for_timeout(300)
         modal = page.get_by_text("Exportar Projeto")
         assert not await modal.is_visible(), "FALHOU: modal deveria ter fechado"

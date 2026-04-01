@@ -1,57 +1,143 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
-
-// Quando a bridge Rust estiver pronta, substituir o mock pela integração real:
-// import { listen } from '@tauri-apps/api/event';
-// import { invoke } from '@tauri-apps/api/tauri';
+import { useProjectStore } from '@/store/projectStore';
+import type { Scene } from '@/store/projectStore';
 
 type ExportStatus = 'idle' | 'rendering' | 'done' | 'error';
 
 interface ExportProgressPayload {
   percentage: number;
-  status: 'rendering' | 'done' | 'error';
-  message?: string;
+  status:     'rendering' | 'done' | 'error';
+  message?:   string;
 }
 
 interface ExportModalProps {
   projectName: string;
-  onClose: () => void;
+  onClose:     () => void;
 }
 
+// Detecta se está rodando dentro do Tauri
+const isTauri = () => typeof window !== 'undefined' && '__TAURI__' in window;
+
+// Pasta temporária para frames (dentro do dir de dados do app)
+const FRAMES_DIR = 'peg_export_frames';
+const BATCH_SIZE = 30; // frames por batch enviado ao Rust
+
 export default function ExportModal({ projectName, onClose }: ExportModalProps) {
+  const project = useProjectStore((s) => s.project!);
+
   const [status, setStatus]       = useState<ExportStatus>('idle');
   const [progress, setProgress]   = useState(0);
   const [statusMsg, setStatusMsg] = useState('');
   const [error, setError]         = useState('');
+  const [encoder, setEncoder]     = useState('Auto (GPU / CPU)');
+  const unlistenRef = useRef<(() => void) | null>(null);
   const mockTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Limpa timer ao desmontar
+  // Detecta o encoder disponível ao abrir o modal
+  useEffect(() => {
+    if (!isTauri()) return;
+    import('@tauri-apps/api/core').then(({ invoke }) => {
+      invoke<string>('detect_gpu_encoder').then((enc) => setEncoder(enc));
+    });
+  }, []);
+
+  // Limpa listeners e timers ao desmontar
   useEffect(() => {
     return () => {
+      unlistenRef.current?.();
       if (mockTimerRef.current) clearInterval(mockTimerRef.current);
     };
   }, []);
 
-  function startExport() {
+  async function startExport() {
     setStatus('rendering');
     setProgress(0);
     setError('');
+    setStatusMsg('Iniciando...');
 
-    // ── TODO: Substituir por integração Tauri real ──────────────────────────
-    // invoke('export_video', { args: buildFFmpegArgs(), totalDuration: 30 });
-    // const unlisten = await listen<ExportProgressPayload>('export-progress', (event) => {
-    //   setProgress(event.payload.percentage);
-    //   setStatusMsg(event.payload.message ?? '');
-    //   if (event.payload.status === 'done')  { setStatus('done');  unlisten(); }
-    //   if (event.payload.status === 'error') { setStatus('error'); setError(event.payload.message ?? 'Erro desconhecido'); unlisten(); }
-    // });
-    // ── Mock de progresso (remover quando Rust estiver pronto) ──────────────
+    if (isTauri()) {
+      await startTauriExport();
+    } else {
+      runMockExport();
+    }
+  }
+
+  // ── Exportação real via Tauri ─────────────────────────────────────────────
+
+  async function startTauriExport() {
+    try {
+      const { invoke }        = await import('@tauri-apps/api/core');
+      const { listen }        = await import('@tauri-apps/api/event');
+      const { exportProjectFrames } = await import('@/utils/ffmpeg/frameExporter');
+      const { buildFFmpegArgs }     = await import('@/utils/ffmpeg/ffmpegBuilder');
+
+      // 1. Detecta encoder
+      const selectedEncoder = await invoke<string>('detect_gpu_encoder') as
+        'h264_nvenc' | 'h264_amf' | 'h264_qsv' | 'libx264';
+
+      // 2. Escuta eventos de progresso do FFmpeg
+      const unlisten = await listen<ExportProgressPayload>('export-progress', (event) => {
+        const { percentage, status: s, message } = event.payload;
+        setProgress(Math.round(percentage));
+        if (s === 'rendering') setStatusMsg(message ?? 'Codificando vídeo...');
+        if (s === 'done')  { setStatus('done');  setStatusMsg('Exportação concluída!'); unlisten(); }
+        if (s === 'error') { setStatus('error'); setError(message ?? 'Erro na exportação.'); unlisten(); }
+      });
+      unlistenRef.current = unlisten;
+
+      // 3. Renderiza frames no canvas offscreen
+      setStatusMsg('Renderizando frames...');
+      const scenes = project.timeline.filter((i): i is Scene => 'elements' in i);
+      const exportResult = await exportProjectFrames(scenes, (ratio) => {
+        setProgress(Math.round(ratio * 50)); // primeiros 50% = renderização
+        setStatusMsg(`Renderizando frames... ${Math.round(ratio * 100)}%`);
+      });
+
+      // 4. Envia frames ao Rust em batches
+      setStatusMsg('Gravando frames no disco...');
+      const allFrames = exportResult.scenes.flatMap((s) => s.frames);
+      for (let i = 0; i < allFrames.length; i += BATCH_SIZE) {
+        const batch = allFrames.slice(i, i + BATCH_SIZE).map((f) => ({
+          index:    f.index,
+          data_url: f.dataUrl,
+        }));
+        await invoke('write_frames', { framesDir: FRAMES_DIR, frames: batch });
+        setProgress(50 + Math.round(((i + batch.length) / allFrames.length) * 10));
+      }
+
+      // 5. Monta e dispara o comando FFmpeg
+      setStatusMsg('Codificando vídeo...');
+      const outputPath = `${FRAMES_DIR}/output.mp4`;
+      const { args } = buildFFmpegArgs(exportResult, {
+        framesDir: FRAMES_DIR,
+        outputPath,
+        encoder:   selectedEncoder,
+      });
+
+      await invoke('export_video', {
+        args,
+        totalDuration: exportResult.totalDuration,
+      });
+
+      // 6. Limpeza de frames temporários
+      await invoke('cleanup_frames', { framesDir: FRAMES_DIR });
+
+    } catch (e) {
+      setStatus('error');
+      setError(String(e));
+    }
+  }
+
+  // ── Mock de progresso (browser dev sem Tauri) ─────────────────────────────
+
+  function runMockExport() {
     const stages = [
       'Renderizando frames...',
       'Renderizando frames...',
-      'Processando overlays...',
+      'Gravando frames no disco...',
       'Codificando vídeo...',
       'Codificando vídeo...',
       'Finalizando...',
@@ -59,28 +145,26 @@ export default function ExportModal({ projectName, onClose }: ExportModalProps) 
     let step = 0;
     mockTimerRef.current = setInterval(() => {
       step++;
-      const pct = Math.min(100, Math.round((step / stages.length) * 100));
-      setProgress(pct);
+      setProgress(Math.min(100, Math.round((step / stages.length) * 100)));
       setStatusMsg(stages[Math.min(step - 1, stages.length - 1)]);
       if (step >= stages.length) {
         clearInterval(mockTimerRef.current!);
         setStatus('done');
-        setStatusMsg('Exportação concluída!');
+        setStatusMsg('Exportação concluída! (simulação)');
       }
     }, 800);
-    // ───────────────────────────────────────────────────────────────────────
   }
 
   function handleClose() {
+    unlistenRef.current?.();
     if (mockTimerRef.current) clearInterval(mockTimerRef.current);
     onClose();
   }
 
   return (
-    // Backdrop
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+      onClick={(e) => { if (e.target === e.currentTarget && status !== 'rendering') handleClose(); }}
     >
       <div className="glass-panel border border-white/10 rounded-2xl w-[440px] p-6 flex flex-col gap-5">
 
@@ -103,7 +187,7 @@ export default function ExportModal({ projectName, onClose }: ExportModalProps) 
           )}
         </div>
 
-        {/* Configurações (só no idle) */}
+        {/* Configurações (idle) */}
         {status === 'idle' && (
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between py-2 border-t border-white/5">
@@ -120,7 +204,7 @@ export default function ExportModal({ projectName, onClose }: ExportModalProps) 
             </div>
             <div className="flex items-center justify-between py-2 border-t border-white/5 border-b border-white/5">
               <span className="text-[11px] font-mono text-white/40">Aceleração</span>
-              <span className="text-[11px] font-mono text-white/70">Auto (GPU / CPU)</span>
+              <span className="text-[11px] font-mono text-white/70">{encoder}</span>
             </div>
           </div>
         )}
@@ -128,14 +212,12 @@ export default function ExportModal({ projectName, onClose }: ExportModalProps) 
         {/* Progresso */}
         {(status === 'rendering' || status === 'done') && (
           <div className="flex flex-col gap-3">
-            {/* Barra */}
             <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden">
               <div
                 className="h-full bg-white rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            {/* % e mensagem */}
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-mono text-white/40">{statusMsg}</span>
               <span className="text-[11px] font-mono text-white/60 tabular-nums">{progress}%</span>
@@ -170,10 +252,7 @@ export default function ExportModal({ projectName, onClose }: ExportModalProps) 
           {status === 'done' && (
             <>
               <Button variant="ghost" size="sm" onClick={handleClose}>Fechar</Button>
-              <Button variant="primary" size="sm" onClick={() => {
-                // TODO: invoke('open_export_folder')
-                handleClose();
-              }}>
+              <Button variant="primary" size="sm" onClick={handleClose}>
                 Abrir Pasta
               </Button>
             </>

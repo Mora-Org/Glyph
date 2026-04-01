@@ -1,43 +1,39 @@
-# Product Specification Document (PSD): PEG — Gerador de Ensaios Visuais
+# Product Specification Document (PSD): Glyph — O Respiro do Ensaio Visual
+Organização: Mora (Mora-Org)
 
-## 1. Executive Summary
-PEG is an open-source desktop application designed for high-aesthetic visual essays and motion design. Unlike linear video editors, PEG focuses on **granular typography control (lettering)**, dynamic scene composition, and hardware-optimized rendering using FFmpeg and Tauri.
+## 1. Visão e Filosofia
+A **Glyph** (anteriormente PEG) é uma ferramenta de autoria visual baseada no manifesto da organização **Mora**. Diferente de editores de vídeo lineares, o Glyph foca na "pausa necessária para a profundidade". O termo "Glyph" refere-se ao caractere individual de uma fonte, simbolizando o controle granular sobre a tipografia e a arte visual.
 
-## 2. System Architecture
-- **Desktop Wrapper:** Tauri (Rust) for native performance and security.
-- **Frontend UI:** Next.js (Static Export) / React.
-- **Graphic Engine:** Fabric.js or Konva.js (2D Canvas) for drag-and-drop and element manipulation.
-- **Render Engine:** FFmpeg (Native execution via Tauri sidecar/commands).
-- **State Management:** JSON-based scene serialization for project persistence.
+**Software como Escudo:** O Glyph é projetado para remover a burocracia técnica do motion design, permitindo que o autor foque na intenção e na estética, sem as amarras de softwares corporativos inorgânicos.
 
-## 3. Core Features
+## 2. Arquitetura do Sistema
+- **Desktop First:** Construído com Tauri (Rust) para segurança e performance nativa.
+- **Frontend:** Next.js (React) + Tailwind CSS.
+- **Graphic Engine:** Fabric.js (2D Canvas) para manipulação de "Glyphs" (caracteres) e assets em tempo real.
+- **Render Engine:** Pipeline complexo de FFmpeg integrado via Rust.
 
-### 3.1. Scene & Timeline Engine
-- **Sequential Structure:** Projects consist of a list of `Scene` objects.
-- **Element-level Timelines:** Every asset (image, text, GIF) has its own entrance/exit time within a scene duration.
-- **Active Pauses:** Configurable "filler" blocks (static noise, VHS artifacts, solid colors).
+## 3. Funcionalidades Principais
 
-### 3.2. Advanced Typography (The "Killer" Feature)
-- **Character-level Manipulation:** Break strings into individual characters with independent X/Y, font, size, and color.
-- **Clipping Masks:** Real-time video-in-text rendering using Canvas compositing.
-- **Aesthetic Presets:** "Anxiety tremor," "Neon flicker," and "Comic lettering" animations.
+### 3.1. O Motor de "Lettering" (Coração do Projeto)
+- **Granularidade do Glifo:** Divisão de strings em caracteres individuais com controle independente de posição, fonte, cor e efeitos.
+- **Efeitos de Estética Orgânica:** "Tremor de Ansiedade", "Neon Flicker" e "Vibration" — capturando a textura da vida real.
+- **Máscaras de Vídeo em Texto:** Renderização em tempo real de vídeos como preenchimento de caracteres.
 
-### 3.3. Asset Management
-- **Local-First:** Direct file system access via Tauri (no internal uploads).
-- **Categorization:** native support for `.ttf/.otf` (fonts), `.jpg/.png` (images), `.mp4/.mov` (videos), and `.gif`.
+### 3.2. Cenas e Timeline
+- **Pausas Ativas:** Blocos de "respiro" configuráveis (Ruído VHS, Tela Preta, Ruído Estático).
+- **Transições Suaves:** Corte seco (Cut) e Fade (Dissolver visual), respeitando o ritmo do ensaio.
 
-### 3.4. Export & Hardware Optimization
-- **Hardware-Aware Rendering:** Auto-selection of GPU drivers (NVENC/AMF) or CPU Multithreading.
-- **Consistency:** FFmpeg-backed exports to ensure cross-platform (Win/Linux) parity for `.mp4` and `.mov`.
+### 3.3. Áudio e Sincronia (Avançado)
+- **Gestão de Silêncio:** Filtros de redução de ruído (noise removal) focados em clareza de voz.
+- **Multi-trilha:** Sincronização entre voz (VO) e trilhas de fundo (BGM).
 
-## 4. User Journey
-1. **Import:** User points PEG to a local folder of assets.
-2. **Compose:** User drags assets onto the Canvas, adjusts character spacing/overlap for "lettering" style.
-3. **Sequencing:** User arranges scenes and sets individual element durations.
-4. **Preview:** Real-time CSS-based filters and Canvas rendering.
-5. **Render:** One-click export using optimized hardware settings.
+### 3.4. Exportação Profissional
+- **Aceleração por GPU:** Detecção inteligente de encoders (NVENC/AMF).
+- **Fidelidade Visual:** Renderização 1:1 entre o que é visto no canvas e o arquivo final.
 
-## 5. Non-Functional Requirements
-- **Performance:** App must be lightweight (< 100MB install size).
-- **UX:** Highly responsive UI for real-time visual feedback.
-- **Extensibility:** Support for custom FFmpeg filter strings.
+## 4. Roadmap de Fases (v1.4)
+1. **Fases 0-4:** Infraestrutura, Store, Canvas e Motor de Lettering/GIF (Concluídas/Testes).
+2. **Fase 5: Exportação:** Pipeline Rust/FFmpeg (Em Desenvolvimento).
+3. **Fase 6: Branded Refactor:** Migração para identidade Glyph e refatoração estética da marca Mora.
+4. **Fase 7: Audio System:** Trilhas, Sync e Noise Removal.
+5. **Fase 8: Artistic Tools:** Borracha (Eraser), Clipping Masks e HSL.
