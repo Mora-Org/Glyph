@@ -13,10 +13,10 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
   useSortable,
-  arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+import { Clapperboard, PauseCircle, Monitor, Tv2, Palette } from 'lucide-react';
 import { useProjectStore } from '@/store/projectStore';
 import type { Scene, ActivePause, TimelineItem, PauseType, TransitionType } from '@/store/projectStore';
 import TransitionBadge from './TransitionBadge';
@@ -38,38 +38,37 @@ function SceneItem({ scene, isActive, onClick }: {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center">
-      {/* Handle de drag visível */}
-      <div
-        {...attributes}
-        {...listeners}
-        className="flex flex-col gap-0.5 px-1 py-2 cursor-grab active:cursor-grabbing opacity-30 hover:opacity-70 transition-opacity"
-        aria-label="Arrastar cena"
-        title="Arrastar para reordenar"
-      >
-        {[0,1,2].map((i) => (
-          <div key={i} className="flex gap-0.5">
-            <div className="w-0.5 h-0.5 rounded-full bg-white" />
-            <div className="w-0.5 h-0.5 rounded-full bg-white" />
-          </div>
-        ))}
-      </div>
+    <div ref={setNodeRef} style={style} className="flex-shrink-0">
+      <div className={`
+        flex flex-col rounded-xl w-44 overflow-hidden
+        border transition-all
+        ${isActive
+          ? 'bg-white text-black border-white/40 shadow-[0_0_14px_rgba(255,255,255,0.12)]'
+          : 'glass text-white/80 border-white/15'}
+      `}>
+        {/* Handle de drag — tira fina no topo do card */}
+        <div
+          {...attributes}
+          {...listeners}
+          className="flex justify-center items-center gap-0.5 py-1.5 cursor-grab active:cursor-grabbing opacity-25 hover:opacity-60 transition-opacity"
+          aria-label="Arrastar cena"
+          title="Arrastar para reordenar"
+        >
+          {[0,1,2,3,4,5].map((i) => (
+            <div key={i} className={`w-0.5 h-0.5 rounded-full ${isActive ? 'bg-black' : 'bg-white'}`} />
+          ))}
+        </div>
 
-      <button
-        onClick={onClick}
-        className={`
-          flex flex-col items-start px-3 py-2 rounded-lg w-28 flex-shrink-0
-          border transition-all text-left cursor-pointer
-          ${isActive
-            ? 'bg-white text-black border-white'
-            : 'glass text-white/60 border-white/10 hover:text-white hover:border-white/25'}
-        `}
-      >
-        <span className="text-[10px] font-mono font-bold truncate w-full">{scene.name}</span>
-        <span className={`text-[9px] font-mono mt-0.5 ${isActive ? 'text-black/50' : 'text-white/30'}`}>
-          {scene.duration}s · {scene.elements.length} elem.
-        </span>
-      </button>
+        <button
+          onClick={onClick}
+          className="flex flex-col items-center justify-center px-5 py-5 text-center cursor-pointer hover:opacity-80 transition-opacity"
+        >
+          <span className="text-xs font-semibold truncate w-full text-center">{scene.name}</span>
+          <span className={`text-[11px] font-mono mt-1.5 ${isActive ? 'text-black/50' : 'text-white/60'}`}>
+            {scene.duration}s · {scene.elements.length} elem.
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -94,28 +93,28 @@ function PauseItem({ pause }: { pause: ActivePause }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center">
-      <div
-        {...attributes}
-        {...listeners}
-        className="flex flex-col gap-0.5 px-1 py-2 cursor-grab active:cursor-grabbing opacity-30 hover:opacity-70 transition-opacity"
-        aria-label="Arrastar pausa"
-        title="Arrastar para reordenar"
-      >
-        {[0,1,2].map((i) => (
-          <div key={i} className="flex gap-0.5">
-            <div className="w-0.5 h-0.5 rounded-full bg-white" />
-            <div className="w-0.5 h-0.5 rounded-full bg-white" />
-          </div>
-        ))}
-      </div>
-
+    <div ref={setNodeRef} style={style} className="flex-shrink-0">
       <div className={`
-        flex flex-col items-start px-3 py-2 rounded-lg w-20 flex-shrink-0
+        flex flex-col rounded-lg w-28 overflow-hidden
         glass border ${pauseColors[pause.type]}
       `}>
-        <span className="text-[9px] font-mono font-bold">{pauseLabels[pause.type]}</span>
-        <span className="text-[9px] font-mono mt-0.5 opacity-60">{pause.duration}s</span>
+        {/* Handle de drag — tira no topo do card de pausa */}
+        <div
+          {...attributes}
+          {...listeners}
+          className="flex justify-center items-center gap-0.5 py-1.5 cursor-grab active:cursor-grabbing opacity-40 hover:opacity-70 transition-opacity"
+          aria-label="Arrastar pausa"
+          title="Arrastar para reordenar"
+        >
+          {[0,1,2,3,4,5].map((i) => (
+            <div key={i} className="w-0.5 h-0.5 rounded-full bg-current" />
+          ))}
+        </div>
+
+        <div className="flex flex-col items-center justify-center px-4 py-4">
+          <span className="text-[10px] font-mono font-bold">{pauseLabels[pause.type]}</span>
+          <span className="text-[10px] font-mono mt-1 opacity-70">{pause.duration}s</span>
+        </div>
       </div>
     </div>
   );
@@ -154,71 +153,90 @@ export default function SceneList() {
   const ids = project.timeline.map((i) => i.id);
 
   return (
-    <div className="flex items-center gap-0 px-4 py-2 border-t border-white/8 overflow-x-auto">
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={ids} strategy={horizontalListSortingStrategy}>
-          {project.timeline.map((item: TimelineItem, index: number) => {
-            const isScene = 'elements' in item;
-            const scene   = item as Scene;
-            const pause   = item as ActivePause;
+    // Wrapper sem overflow — permite que o menu de pausa apareça fora do scroll
+    <div className="flex items-stretch border-t border-white/8 min-h-[10vh]">
 
-            return (
-              <React.Fragment key={item.id}>
-                {isScene ? (
-                  <SceneItem
-                    scene={scene}
-                    isActive={scene.id === activeSceneId}
-                    onClick={() => setActive(scene.id)}
-                  />
-                ) : (
-                  <PauseItem pause={pause} />
-                )}
+      {/* Área scrollável com as cenas/pausas */}
+      <div className="flex items-center gap-3 px-4 overflow-x-auto flex-1 min-w-0">
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={ids} strategy={horizontalListSortingStrategy}>
+            {project.timeline.map((item: TimelineItem, index: number) => {
+              const isScene = 'elements' in item;
+              const scene   = item as Scene;
+              const pause   = item as ActivePause;
 
-                {/* Badge de transição entre cenas adjacentes */}
-                {isScene && index < project.timeline.length - 1 && (
-                  <TransitionBadge
-                    type={scene.transition}
-                    onChange={(t) => handleTransitionChange(scene.id, t)}
-                  />
-                )}
-              </React.Fragment>
-            );
-          })}
-        </SortableContext>
-      </DndContext>
+              return (
+                <React.Fragment key={item.id}>
+                  {isScene ? (
+                    <SceneItem
+                      scene={scene}
+                      isActive={scene.id === activeSceneId}
+                      onClick={() => setActive(scene.id)}
+                    />
+                  ) : (
+                    <PauseItem pause={pause} />
+                  )}
 
-      {/* Ações */}
-      <div className="flex items-center gap-1 ml-3 flex-shrink-0">
+                  {/* Badge de transição entre cenas adjacentes */}
+                  {isScene && index < project.timeline.length - 1 && (
+                    <TransitionBadge
+                      type={scene.transition}
+                      onChange={(t) => handleTransitionChange(scene.id, t)}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </SortableContext>
+        </DndContext>
+      </div>
+
+      {/* Ações — fora do overflow para o menu de pausa não ser cortado */}
+      <div className="flex flex-col justify-center gap-3 px-10 py-6 mr-12 border-l border-white/8 flex-shrink-0 relative min-w-[160px]">
         <button
           onClick={addScene}
           aria-label="Adicionar cena"
           data-testid="add-scene"
-          className="glass px-2 py-1.5 rounded-lg text-[10px] font-mono text-white/40 hover:text-white border border-white/8 hover:border-white/20 transition-all"
+          className="flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold text-white/60 bg-white/5 border border-white/10 hover:text-white hover:bg-white/10 transition-all w-full"
         >
-          + Cena
+          <Clapperboard size={15} />
+          Cena
         </button>
 
         {/* Menu de pausa */}
-        <div className="relative">
+        <div className="relative w-full">
           <button
             onClick={() => setShowPauseMenu((v) => !v)}
             aria-label="Adicionar pausa"
             data-testid="add-pause"
-            className="glass px-2 py-1.5 rounded-lg text-[10px] font-mono text-white/40 hover:text-white border border-white/8 hover:border-white/20 transition-all"
+            className="flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold text-white/60 bg-white/5 border border-white/10 hover:text-white hover:bg-white/10 transition-all w-full"
           >
-            + Pausa
+            <PauseCircle size={15} />
+            Pausa
           </button>
           {showPauseMenu && (
-            <div className="absolute bottom-9 left-0 glass-panel border border-white/10 p-1 flex flex-col gap-0.5 z-50 min-w-[120px]">
-              {(['black', 'vhs', 'solid'] as PauseType[]).map((type) => (
-                <button
-                  key={type}
-                  onClick={() => { addPause(type, 3); setShowPauseMenu(false); }}
-                  className="text-left px-3 py-1.5 text-xs font-mono text-white/60 hover:text-white hover:bg-white/8 rounded transition-colors"
-                >
-                  {pauseLabels[type]}
-                </button>
-              ))}
+            <div
+              className="absolute right-0 glass-panel border border-white/12 p-1 flex flex-col gap-0.5 z-50 min-w-[130px]"
+              style={{ bottom: 'calc(100% + 6px)' }}
+            >
+              <button
+                onClick={() => { addPause('black', 3); setShowPauseMenu(false); }}
+                className="flex items-center gap-2 px-3 py-2 text-xs font-mono text-white/60 hover:text-white hover:bg-white/8 rounded transition-colors"
+              >
+                <Monitor size={12} /> Tela Preta
+              </button>
+              <button
+                onClick={() => { addPause('vhs', 3); setShowPauseMenu(false); }}
+                className="flex items-center gap-2 px-3 py-2 text-xs font-mono text-white/60 hover:text-white hover:bg-white/8 rounded transition-colors"
+              >
+                <Tv2 size={12} /> Ruído VHS
+              </button>
+              <button
+                onClick={() => { addPause('solid', 3); setShowPauseMenu(false); }}
+                className="flex items-center gap-2 px-3 py-2 text-xs font-mono text-white/60 hover:text-white hover:bg-white/8 rounded transition-colors"
+              >
+                <Palette size={12} /> Cor Sólida
+              </button>
             </div>
           )}
         </div>

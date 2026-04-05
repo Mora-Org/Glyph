@@ -24,25 +24,25 @@ export default function TransitionBadge({ type, onChange }: TransitionBadgeProps
   return (
     <div className="relative flex items-center">
       {/* Linha conectora */}
-      <div className="w-4 h-px bg-white/15" />
+      <div className="w-5 h-px bg-white/15" />
 
       <button
         onClick={cycle}
         title={`Transição: ${labels[type]} — clique para mudar`}
         className="
           flex items-center justify-center
-          px-1.5 py-0.5 rounded
-          text-[9px] font-mono font-bold tracking-wider
+          px-3 py-1.5 rounded-lg
+          text-[11px] font-mono font-bold tracking-wider
           border transition-all
           bg-[#0a0a0a] hover:bg-white/10
-          text-white/40 hover:text-white/80
-          border-white/10 hover:border-white/25
+          text-[#AAA] hover:text-white
+          border-white/20 hover:border-white/40
         "
       >
         {labels[type]}
       </button>
 
-      <div className="w-4 h-px bg-white/15" />
+      <div className="w-5 h-px bg-white/15" />
     </div>
   );
 }
