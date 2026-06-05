@@ -55,13 +55,32 @@ export interface ActivePause {
 
 export type TimelineItem = Scene | ActivePause;
 
+export interface AudioElement {
+  id: string;
+  src: string;          // Caminho local do arquivo
+  startTime: number;    // Início no Tempo Global (segundos)
+  duration: number;     // Duração do recorte
+  offset: number;       // Início dentro do arquivo original
+  volume: number;       // Ganho (0.0 a 1.0)
+  noiseReduction: boolean;
+}
+
+export interface AudioTrack {
+  id: string;
+  name: string;
+  type: 'vo' | 'bgm';   // Narração ou Fundo
+  elements: AudioElement[];
+}
+
 export interface Project {
   id: string;
   name: string;
   createdAt: string;
   updatedAt: string;
   timeline: TimelineItem[]; // cenas e pausas em ordem
+  audioTracks: AudioTrack[]; // Trilhas de áudio multi-camada
   activeSceneId: string | null;
+  currentTime: number;      // Playhead global em segundos
 }
 
 // ---------- Store ----------
@@ -71,7 +90,9 @@ interface ProjectStore {
 
   // Projeto
   createProject: (name: string) => void;
+  closeProject: () => void;
   setActiveScene: (id: string) => void;
+  seekTo: (time: number) => void;
 
   // Cenas
   addScene: () => void;
@@ -86,6 +107,13 @@ interface ProjectStore {
   addElement: (sceneId: string, element: SceneElement) => void;
   updateElement: (sceneId: string, elementId: string, patch: Partial<SceneElement>) => void;
   removeElement: (sceneId: string, elementId: string) => void;
+
+  // Áudio (Fase 7)
+  addAudioTrack: (type: AudioTrack['type']) => void;
+  removeAudioTrack: (id: string) => void;
+  addAudioElement: (trackId: string, element: Omit<AudioElement, 'id'>) => void;
+  updateAudioElement: (trackId: string, elementId: string, patch: Partial<AudioElement>) => void;
+  removeAudioElement: (trackId: string, elementId: string) => void;
 }
 
 function uid(): string {
@@ -121,14 +149,26 @@ export const useProjectStore = create<ProjectStore>()(
               createdAt: now(),
               updatedAt: now(),
               timeline: [firstScene],
+              audioTracks: [
+                { id: uid(), name: 'Narração', type: 'vo', elements: [] },
+                { id: uid(), name: 'Música de Fundo', type: 'bgm', elements: [] },
+              ],
               activeSceneId: firstScene.id,
+              currentTime: 0,
             },
           };
         }),
 
+      closeProject: () => set({ project: null }),
+
       setActiveScene: (id) =>
         set((s) => ({
           project: s.project ? { ...s.project, activeSceneId: id } : null,
+        })),
+
+      seekTo: (time) =>
+        set((s) => ({
+          project: s.project ? { ...s.project, currentTime: time } : null,
         })),
 
       addScene: () =>
@@ -239,6 +279,88 @@ export const useProjectStore = create<ProjectStore>()(
               timeline: s.project.timeline.map((i) => {
                 if (i.id !== sceneId || !('elements' in i)) return i;
                 return { ...i, elements: i.elements.filter((el) => el.id !== elementId) };
+              }),
+            },
+          };
+        }),
+
+      // --- Áudio (Fase 7) ---
+
+      addAudioTrack: (type) =>
+        set((s) => {
+          if (!s.project) return {};
+          const track: AudioTrack = {
+            id: uid(),
+            name: type === 'vo' ? 'Narração' : 'Trilha Sonora',
+            type,
+            elements: [],
+          };
+          return {
+            project: {
+              ...s.project,
+              updatedAt: now(),
+              audioTracks: [...s.project.audioTracks, track],
+            },
+          };
+        }),
+
+      removeAudioTrack: (id) =>
+        set((s) => {
+          if (!s.project) return {};
+          return {
+            project: {
+              ...s.project,
+              updatedAt: now(),
+              audioTracks: s.project.audioTracks.filter((t) => t.id !== id),
+            },
+          };
+        }),
+
+      addAudioElement: (trackId, element) =>
+        set((s) => {
+          if (!s.project) return {};
+          const newElement: AudioElement = { ...element, id: uid() };
+          return {
+            project: {
+              ...s.project,
+              updatedAt: now(),
+              audioTracks: s.project.audioTracks.map((t) =>
+                t.id === trackId ? { ...t, elements: [...t.elements, newElement] } : t
+              ),
+            },
+          };
+        }),
+
+      updateAudioElement: (trackId, elementId, patch) =>
+        set((s) => {
+          if (!s.project) return {};
+          return {
+            project: {
+              ...s.project,
+              updatedAt: now(),
+              audioTracks: s.project.audioTracks.map((t) => {
+                if (t.id !== trackId) return t;
+                return {
+                  ...t,
+                  elements: t.elements.map((el) =>
+                    el.id === elementId ? { ...el, ...patch } : el
+                  ),
+                };
+              }),
+            },
+          };
+        }),
+
+      removeAudioElement: (trackId, elementId) =>
+        set((s) => {
+          if (!s.project) return {};
+          return {
+            project: {
+              ...s.project,
+              updatedAt: now(),
+              audioTracks: s.project.audioTracks.map((t) => {
+                if (t.id !== trackId) return t;
+                return { ...t, elements: t.elements.filter((el) => el.id !== elementId) };
               }),
             },
           };

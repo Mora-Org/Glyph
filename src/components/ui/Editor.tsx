@@ -8,7 +8,6 @@ import MainCanvas, { type MainCanvasHandle } from '@/components/canvas/MainCanva
 import ActivePauseCanvas from '@/components/canvas/ActivePauseCanvas';
 import AssetSidebar from '@/components/ui/AssetSidebar';
 import SceneList from '@/components/timeline/SceneList';
-import AudioTrackArea from '@/components/timeline/AudioTrackArea';
 import ElementTimeline from '@/components/timeline/ElementTimeline';
 import LetteringPanel from '@/components/typography/LetteringPanel';
 import ExportModal from '@/components/ui/ExportModal';
@@ -152,11 +151,8 @@ export default function Editor() {
           <ElementTimeline scene={activeItem as Scene} />
         )}
 
-        {/* SceneList com drag & drop */}
+        {/* SceneList com drag & drop (inclui régua, trilhas de áudio e playhead) */}
         <SceneList />
-
-        {/* Trilhas de áudio */}
-        <AudioTrackArea />
 
       </div>
     </div>

@@ -5,9 +5,9 @@ import { useProjectStore } from '@/store/projectStore';
 import type { AudioElement } from '@/store/projectStore';
 import { PIXELS_PER_SECOND, TRACK_HEIGHT } from './TimelineConstants';
 import { Mic, Music, Trash2, Volume2, Plus } from 'lucide-react';
-import { getTotalDuration } from '@/utils/timeHelpers';
 
-const AUDIO_EXTS = '.mp3,.wav,.ogg,.m4a,.aac,.flac';
+const AUDIO_EXTS  = '.mp3,.wav,.ogg,.m4a,.aac,.flac';
+const LANE_HEIGHT = TRACK_HEIGHT * 2;
 
 // ── AudioBlock ────────────────────────────────────────────────────────────────
 
@@ -54,21 +54,17 @@ function AudioBlock({ element, trackType, onRemove, onToggleNR }: {
   );
 }
 
-// ── AudioTrackArea ─────────────────────────────────────────────────────────────
+// ── AudioTrackLabels (coluna gutter, largura fixa) ──────────────────────────────
 
 /**
- * AudioTrackArea: Renderiza as trilhas de áudio (VO, BGM) abaixo das cenas.
+ * Coluna de labels/controles das trilhas de áudio. Fica no gutter fixo do SceneList,
+ * fora do eixo de tempo. Cada linha tem altura LANE_HEIGHT, casando com AudioTrackLanes.
  */
-export default function AudioTrackArea() {
-  const project            = useProjectStore((s) => s.project!);
-  const currentTime        = useProjectStore((s) => s.project?.currentTime ?? 0);
-  const addAudioTrack      = useProjectStore((s) => s.addAudioTrack);
-  const removeAudioTrack   = useProjectStore((s) => s.removeAudioTrack);
-  const addAudioElement    = useProjectStore((s) => s.addAudioElement);
-  const updateAudioElement = useProjectStore((s) => s.updateAudioElement);
-  const removeAudioElement = useProjectStore((s) => s.removeAudioElement);
-
-  const totalWidth = Math.max(getTotalDuration(project.timeline) * PIXELS_PER_SECOND, 400);
+export function AudioTrackLabels() {
+  const tracks           = useProjectStore((s) => s.project?.audioTracks ?? []);
+  const addAudioTrack    = useProjectStore((s) => s.addAudioTrack);
+  const removeAudioTrack = useProjectStore((s) => s.removeAudioTrack);
+  const addAudioElement  = useProjectStore((s) => s.addAudioElement);
 
   function handleAudioFile(trackId: string, e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -84,10 +80,9 @@ export default function AudioTrackArea() {
     e.target.value = '';
   }
 
-  // Estado vazio: barra compacta com atalhos para criar trilha
-  if (project.audioTracks.length === 0) {
+  if (tracks.length === 0) {
     return (
-      <div className="border-t border-white/8 flex items-center gap-3 px-4 py-2 bg-[#0a0a0a]">
+      <div className="flex items-center gap-3 px-3 py-2 border-t border-white/8">
         <span className="text-[9px] font-mono text-white/20 uppercase tracking-wider">Áudio</span>
         <button
           onClick={() => addAudioTrack('vo')}
@@ -108,54 +103,33 @@ export default function AudioTrackArea() {
   }
 
   return (
-    <div className="border-t border-white/8 bg-[#0a0a0a] flex flex-col">
-      {project.audioTracks.map((track) => {
+    <div className="flex flex-col border-t border-white/8">
+      {tracks.map((track) => {
         const Icon      = track.type === 'vo' ? Mic : Music;
         const iconColor = track.type === 'vo' ? 'text-cyan-400/60' : 'text-pink-400/60';
-
         return (
-          <div key={track.id} className="flex border-b border-white/5 last:border-0" style={{ height: TRACK_HEIGHT * 2 }}>
-
-            {/* Header lateral */}
-            <div className="w-32 flex-shrink-0 flex flex-col justify-center gap-1 px-3 border-r border-white/8">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <Icon size={10} className={iconColor} />
-                  <span className="text-[10px] font-mono text-white/60 truncate max-w-[60px]">{track.name}</span>
-                </div>
-                <button
-                  onClick={() => removeAudioTrack(track.id)}
-                  title="Remover trilha"
-                  className="text-white/20 hover:text-red-400/70 transition-colors"
-                >
-                  <Trash2 size={9} />
-                </button>
+          <div
+            key={track.id}
+            className="flex flex-col justify-center gap-1 px-3 border-b border-white/5 last:border-0"
+            style={{ height: LANE_HEIGHT }}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <Icon size={10} className={iconColor} />
+                <span className="text-[10px] font-mono text-white/60 truncate max-w-[60px]">{track.name}</span>
               </div>
-              <label className="cursor-pointer flex items-center gap-1 text-[9px] font-mono text-white/25 hover:text-white/60 transition-colors">
-                <Plus size={9} /> arquivo
-                <input type="file" accept={AUDIO_EXTS} className="hidden" onChange={(e) => handleAudioFile(track.id, e)} />
-              </label>
+              <button
+                onClick={() => removeAudioTrack(track.id)}
+                title="Remover trilha"
+                className="text-white/20 hover:text-red-400/70 transition-colors"
+              >
+                <Trash2 size={9} />
+              </button>
             </div>
-
-            {/* Área de blocos */}
-            <div className="flex-1 overflow-x-hidden relative">
-              <div className="relative h-full" style={{ width: totalWidth }}>
-                {track.elements.map((el) => (
-                  <AudioBlock
-                    key={el.id}
-                    element={el}
-                    trackType={track.type}
-                    onRemove={() => removeAudioElement(track.id, el.id)}
-                    onToggleNR={() => updateAudioElement(track.id, el.id, { noiseReduction: !el.noiseReduction })}
-                  />
-                ))}
-                {/* Playhead espelhado */}
-                <div
-                  className="absolute top-0 bottom-0 w-px bg-red-500/50 pointer-events-none z-10"
-                  style={{ left: currentTime * PIXELS_PER_SECOND }}
-                />
-              </div>
-            </div>
+            <label className="cursor-pointer flex items-center gap-1 text-[9px] font-mono text-white/25 hover:text-white/60 transition-colors">
+              <Plus size={9} /> arquivo
+              <input type="file" accept={AUDIO_EXTS} className="hidden" onChange={(e) => handleAudioFile(track.id, e)} />
+            </label>
           </div>
         );
       })}
@@ -170,6 +144,42 @@ export default function AudioTrackArea() {
           <Music size={8} /> BGM
         </button>
       </div>
+    </div>
+  );
+}
+
+// ── AudioTrackLanes (coluna de tempo) ───────────────────────────────────────────
+
+/**
+ * Lanes de áudio renderizadas no eixo de tempo. Cada bloco é posicionado por
+ * startTime × escala — alinhado em x=0 = t=0 com cenas, régua e playhead.
+ */
+export function AudioTrackLanes() {
+  const tracks             = useProjectStore((s) => s.project?.audioTracks ?? []);
+  const updateAudioElement = useProjectStore((s) => s.updateAudioElement);
+  const removeAudioElement = useProjectStore((s) => s.removeAudioElement);
+
+  if (tracks.length === 0) return null;
+
+  return (
+    <div className="flex flex-col border-t border-white/8">
+      {tracks.map((track) => (
+        <div
+          key={track.id}
+          className="relative border-b border-white/5 last:border-0"
+          style={{ height: LANE_HEIGHT }}
+        >
+          {track.elements.map((el) => (
+            <AudioBlock
+              key={el.id}
+              element={el}
+              trackType={track.type}
+              onRemove={() => removeAudioElement(track.id, el.id)}
+              onToggleNR={() => updateAudioElement(track.id, el.id, { noiseReduction: !el.noiseReduction })}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

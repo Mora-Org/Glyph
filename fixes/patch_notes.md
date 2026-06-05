@@ -1,6 +1,55 @@
 # Patch Notes — PEG
 Histórico de versões e aprendizados.
 
+## v0.8.1 (2026-06-05) — Reordenação de cenas acessível por teclado (Claude Code)
+
+### Contexto
+Triagem das 5 falhas do TestSprite (suíte de 02/jun) confirmou que **nenhuma é bug do app**:
+- **TC002 / TC006** — bloqueadas pelo ambiente (runtime não forneceu caminho de arquivo para upload).
+- **TC004** — teste inválido: referencia uma "pricing page" em `http://localhost/Taktimize/`, app inexistente neste projeto (alucinação do gerador).
+- **TC007 / TC012** — limitações de automação: ambas as features funcionam, mas o harness headless não consegue dirigi-las (dnd exige movimento real de ponteiro; handle de trim de 12px é difícil de focar).
+
+Investigando o TC007, identifiquei uma **lacuna de acessibilidade real**: a reordenação de cenas só tinha `PointerSensor`, sem caminho por teclado.
+
+### Mudanças
+- **`SceneList.tsx` — `KeyboardSensor` adicionado** ao `@dnd-kit` junto ao `PointerSensor`, usando `sortableKeyboardCoordinates` como `coordinateGetter`. Agora a reordenação de cenas/pausas é possível por teclado (focar a alça de drag → `Space` ativa → setas movem → `Space` solta). Os handles já recebem `tabIndex`/`role` via `{...attributes}` do `useSortable`, então tornam-se focáveis automaticamente. Benefício duplo: acessibilidade + a feature passa a ser automatável por QA headless.
+
+### Validação
+- `tsc --noEmit`: sem erros novos (mantêm-se apenas os 3 erros pré-existentes de tipos do Fabric.js em `frameExporter.ts:137-139`).
+
+### Aprendizados
+- Falha de QA headless em drag-and-drop `@dnd-kit` quase sempre é limitação do harness (precisa de eventos de ponteiro reais), **não** bug — mas é um bom gatilho para checar se existe caminho de teclado equivalente. Adicionar `KeyboardSensor` resolve a acessibilidade e destrava a automação de uma só vez.
+- Antes de tratar uma falha de teste como bug, validar a origem: TC004 ("Taktimize"/pricing) era ruído do gerador de testes, não do produto.
+
+---
+
+## v0.8.0 (2026-06-02) — Fase 7 v2b: Integração Playhead & Ruler (Claude Code)
+
+### Contexto
+Os componentes `Playhead`, `GlobalRuler`, `TimelineConstants` e `timeHelpers` existiam no disco mas a integração estava com bugs. Esta entrega fecha a v2b da Fase 7.
+
+### Mudanças
+- **Bug — render duplicado:** `AudioTrackArea` era renderizado 2× (dentro do `SceneList` e de novo no `Editor.tsx`). Removido o do `Editor`; o `SceneList` é a fonte única da timeline.
+- **`AudioTrackArea` dividido em dois:** `AudioTrackLabels` (coluna gutter fixa: nome/controles/add arquivo/remover) e `AudioTrackLanes` (eixo de tempo: só os blocos, posicionados por `startTime × escala`). Necessário para alinhar áudio às cenas no mesmo eixo de tempo.
+- **`SceneList` reestruturado** em duas colunas: **gutter fixo** (transporte + label "Cenas" + `AudioTrackLabels`) e **coluna de tempo scrollável** (`#global-timeline-area`) que empilha `GlobalRuler → cenas → AudioTrackLanes → Playhead`, todos com `width = total × PIXELS_PER_SECOND` e alinhados em `x=0 = t=0`.
+- **`TransitionBadge` agora flutua** sobre a junção das cenas com largura 0 no fluxo — antes consumia largura horizontal e desalinhava a régua/playhead das cenas.
+- **Transporte play/pause** (`Play`/`Pause` no gutter): loop `requestAnimationFrame` que avança `currentTime` via `seekTo` em tempo real e move o playhead; para ao fim da duração total; reinicia do zero se acionado no fim. O `useEffect` de sync do `Editor` troca a cena ativa conforme o playhead cruza as fronteiras.
+- **Constantes centralizadas** em `TimelineConstants.ts` (`GUTTER_WIDTH`, `RULER_HEIGHT`, `SCENE_LANE_HEIGHT`); `Playhead` e `GlobalRuler` deixaram de usar `PIXELS_PER_SECOND = 40` hardcoded e importam a constante.
+
+### Validação
+- `tsc --noEmit`: sem erros novos (mantêm-se apenas os 3 erros pré-existentes de tipos do Fabric.js em `frameExporter.ts:137-139`, que não afetam o build).
+- `next build`: ✓ compilado em ~3.4s, static export gerado.
+- **Verificação visual (Playwright headless, viewport 1440×900):** ✓ criado projeto → 3 cenas → trilhas VO/BGM → upload de áudio → play. Confirmado: régua, cenas, lanes de áudio e playhead todos alinhados no eixo de tempo (x=0 = t=0); bloco de áudio de 10s fiel à régua; badges CUT flutuando nas junções sem deslocar o eixo; transporte avançou `currentTime` 0.0 → 1.7s com playhead se movendo sobre as cenas; **0 erros de console**.
+- **TestSprite** (suíte de regressão legada, dev mode, 15 testes): **10/15 aprovados (66,67%)**. Nenhuma falha é regressão da v2b — TC001 (entrar no Editor/timeline), TC003 (cenas), TC011 (toggle CUT/FADE → badges absolutos) e as 3 pausas passaram. As 5 falhas são: 2 bloqueadas por ambiente (upload sem arquivo: TC002/TC006), 1 caso inválido (TC004 referencia app "Taktimize"/pricing inexistente), 2 limitações de automação drag/teclado (TC007 dnd reorder, TC012 handles de trim — componentes não modificados nesta fase). Relatório: `testsprite_tests/testsprite-mcp-test-report.md`.
+- **Lacuna conhecida:** a suíte legada não cobre os recursos de áudio da v2b (VO/BGM, transporte, playhead) — validados por Playwright; regenerar o test plan com casos de áudio é recomendado.
+
+### Aprendizados
+- Para alinhar trilhas heterogêneas (cenas, régua, áudio) num único eixo de tempo, o padrão correto é separar **gutter de labels** (coluna fixa) da **coluna de tempo** (scroll). Embutir o gutter dentro de cada trilha (como o `AudioTrackArea` original fazia com `w-32` interno) quebra o alinhamento.
+- Loop de animação que escreve no store deve ler o estado fresco via `useProjectStore.getState()` dentro do `requestAnimationFrame`, com `useEffect` dependente só de `isPlaying` — senão cada `seekTo` reinicia o efeito e o loop trava.
+- Elementos entre itens de um flex (badges) devem ter largura 0 + conteúdo `absolute` quando o eixo precisa permanecer fiel ao tempo.
+
+---
+
 ## v0.1.0 (2026-03-26)
 ### Mudanças
 - Inicialização da estrutura de pastas modular (Next.js + Tauri).
@@ -133,3 +182,26 @@ Histórico de versões e aprendizados.
 ### Aprendizados
 - Fabric.js v6 mudou o cast de tipos — usar `as unknown as T` para propriedades customizadas em objetos Fabric.
 - `FabricImage` com elemento `<video>` precisa de re-render manual via `requestAnimationFrame` — não atualiza automaticamente.
+
+---
+
+## v0.7.0 (2026-04-30) — F1: Fundação Glyph DS (Redesign Editorial)
+
+### Mudanças
+- `src/app/globals.css` — reescrita completa para Glyph Design System: tokens Midnight Indigo/Vanilla Cream/yellow accent, @font-face (Fraunces var + Geist var + Geist Mono var), @theme inline bridge Tailwind, classes semânticas (.glyph-display-xl/l/m, .glyph-h1/2/3, .glyph-label, .glyph-mono, .glyph-data), scrollbar, paper texture, keyframes (tremor/neon/vibration).
+- `public/fonts/` — 4 fontes variáveis self-hosted: Fraunces (normal+italic TTF), Geist (woff2), Geist Mono (TTF). Offline-first para Tauri.
+- `src/app/layout.tsx` — removidos Google Fonts; adicionados `<link rel="preload">` para Geist/Fraunces; `className="glyph-root"` no body.
+- `src/components/glyph/GlyphButton.tsx` — variantes primary/secondary/ghost/danger, tamanhos sm/md/lg, hover+disabled via inline styles, `ease-editorial`.
+- `src/components/glyph/GlyphInput.tsx` — label mono uppercase, focus ring accent, erro inline bordeaux.
+- `src/components/glyph/Toggle.tsx` — 26×14px pill accent, knob com transição 120ms.
+- `src/components/glyph/Slider.tsx` — track 2px + fill accent + knob 8px, input range oculto.
+- `src/components/glyph/Swatch.tsx` — swatch colorido com estado selected (double ring).
+- `src/components/glyph/NumField.tsx` — drag scrub (ew-resize) + double-click edição, tabular-nums, clamp min/max.
+- `src/components/glyph/SegBtn.tsx` — segmented control genérico, ativo com bg-elevated + accent.
+- `src/components/glyph/Icons.tsx` — 43 ícones Lucide-style (1.5px stroke, currentColor, prop size), incluindo novos: IconInfo, IconCopy, IconTrash, IconLock, IconEye, IconExternal, IconLink.
+- `src/components/glyph/index.ts` — barrel export de todos os primitivos.
+
+### Aprendizados
+- Fontes variáveis (opsz/SOFT/WONK no Fraunces) precisam de `font-variation-settings` explícito para expressar a estética editorial — padrão browsers ignora eixos customizados.
+- NumField com drag scrub precisa de `window.addEventListener` (não element) para capturar mouse fora da área do componente ao arrastar rápido.
+- Build Next.js clean (3.2s Turbopack) confirma que mudanças de F1 não introduziram regressões.
