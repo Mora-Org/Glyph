@@ -1,6 +1,29 @@
 # Patch Notes — PEG
 Histórico de versões e aprendizados.
 
+## v0.9.2 (2026-06-15) — F4b: Properties contextual com binding ao vivo (Claude Code)
+
+### Contexto
+Segunda metade da F4 (a arriscada): painel Properties que escreve no objeto Fabric ao vivo. Decisões aprovadas pelo Boss ("vai e vai"): handles de seleção **neutros** (não accent, respeita orçamento de acento); Properties como painel **canônico** roteando o LetteringPanel pelo mesmo `applyPatch`.
+
+### Mudanças
+- `src/hooks/useFabricCanvas.ts` — `applyPatch(id, patch)`: lookup por `pegId`, `obj.set` (cast p/ IText em fontSize/text/fontFamily), `setCoords` + `requestRenderAll`. One-way (não dispara `object:modified` nem `selection:*`). Exposto no retorno.
+- `src/components/canvas/MainCanvas.tsx` — `applyPatch` no `MainCanvasHandle`.
+- `src/components/glyph/Slider.tsx` + `NumField.tsx` — prop `onCommit` (mouseup/touchend/keyup / fim do scrub / Enter-blur). **Fronteira de commit:** `applyPatch` a cada `onChange` (preview ao vivo), `updateElement` só no commit → evita ~120 writes/2s no localStorage.
+- `src/components/ui/properties/` (novo) — `PropPrimitives` (PropHeader/PropSection/PropRow), `PropTextMode` (X/Y, Tamanho, Rotação via draft local; Cor via `<input type=color>`; Efeitos Nenhum/Tremor/Neon/Letreiro), `PropSceneMode` (Duração, Transição cut/fade), `PropertiesPanel` (switch por `selectedElementId`).
+- `src/components/ui/Editor.tsx` — `properties={<PropertiesPanel .../>}` no slot do EditorShell; `onPatch` ligado ao LetteringPanel.
+- `src/components/typography/LetteringPanel.tsx` — `handleSize/Color/FontChange` agora também chamam `onPatch` → preview ao vivo (antes só `updateElement`, preview quebrado).
+
+### Verificação (Playwright, valores reais)
+- Scene mode renderiza (Duração/Transição); selecionar texto no canvas → Text mode com todos os campos.
+- **Slider Tamanho: 72 → 273 ao vivo** no canvas; **localStorage persistiu 273** (commit único, não por frame).
+- Efeito Neon ativo em accent `rgb(232,181,71)`; clicar canvas vazio → volta ao Scene mode. **Zero erros de console.** `tsc` sem erros novos.
+
+### Aprendizados
+- **Draft local desacopla preview de persist:** os inputs do Properties mantêm estado local (re-render só do painel) e chamam `applyPatch` (Fabric) por frame; `updateElement` (persist) só no commit. Resolve o snapback de input controlado E o thrash de localStorage de uma vez.
+- **`obj.set` programático não reentra:** não dispara `object:modified`/`selection:*` → caminho one-way, sem loop seleção↔render.
+- **Pendências de polish (não-bloqueantes):** trilha do Slider pinta accent sempre (várias trilhas accent no modo Texto) — refinar p/ trilha neutra + thumb accent em foco. Campos sem schema (Opacidade/Peso/Tracking/Leading → F6; Fundo/Áudio da cena → expandir `Scene`).
+
 ## v0.9.1 (2026-06-15) — F4a: Canvas Chrome + fundação Properties (Claude Code)
 
 ### Contexto

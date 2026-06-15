@@ -8,10 +8,11 @@ interface SliderProps {
   max?: number;
   step?: number;
   onChange: (value: number) => void;
+  onCommit?: () => void;
   disabled?: boolean;
 }
 
-export function Slider({ value, min = 0, max = 100, step = 1, onChange, disabled }: SliderProps) {
+export function Slider({ value, min = 0, max = 100, step = 1, onChange, onCommit, disabled }: SliderProps) {
   const percent = ((value - min) / (max - min)) * 100;
 
   return (
@@ -39,6 +40,9 @@ export function Slider({ value, min = 0, max = 100, step = 1, onChange, disabled
         value={value}
         disabled={disabled}
         onChange={(e) => onChange(Number(e.target.value))}
+        onMouseUp={onCommit}
+        onTouchEnd={onCommit}
+        onKeyUp={onCommit}
         style={{
           position: 'absolute',
           width: '100%',

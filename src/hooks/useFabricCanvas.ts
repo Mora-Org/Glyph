@@ -233,7 +233,31 @@ export function useFabricCanvas({ sceneId, width, height }: UseFabricCanvasOptio
     }
   }, []);
 
-  return { canvasRef, fabricRef, addImage, addVideo, addGif, addText, setElementEffect };
+  // Aplica um patch do Properties direto no objeto Fabric (preview ao vivo).
+  // obj.set programático NÃO dispara object:modified nem selection:* → one-way, sem loop.
+  const applyPatch = useCallback((elementId: string, patch: Partial<SceneElement>) => {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+    const obj = canvas.getObjects().find(
+      (o) => (o as unknown as { pegId?: string }).pegId === elementId
+    );
+    if (!obj) return;
+
+    // Cast: fontSize/text/fontFamily só existem em IText, não em FabricObject base.
+    const t = obj as unknown as { set: (o: Record<string, unknown>) => void; setCoords: () => void };
+    if (patch.transform?.x        !== undefined) t.set({ left:  patch.transform.x });
+    if (patch.transform?.y        !== undefined) t.set({ top:   patch.transform.y });
+    if (patch.transform?.rotation !== undefined) t.set({ angle: patch.transform.rotation });
+    if (patch.fill                !== undefined) t.set({ fill:  patch.fill });
+    if (patch.text                !== undefined) t.set({ text:  patch.text });
+    if (patch.fontSize            !== undefined) t.set({ fontSize: patch.fontSize });
+    if (patch.fontFamily          !== undefined) t.set({ fontFamily: patch.fontFamily });
+
+    t.setCoords();
+    canvas.requestRenderAll();
+  }, []);
+
+  return { canvasRef, fabricRef, addImage, addVideo, addGif, addText, setElementEffect, applyPatch };
 }
 
 // ── Efeitos de animação ───────────────────────────────────────────────────────

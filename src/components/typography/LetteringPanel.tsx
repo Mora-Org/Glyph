@@ -9,6 +9,7 @@ interface LetteringPanelProps {
   scene: Scene;
   onAddText: (el: SceneElement) => void;
   onSetEffect: (elementId: string, effect: AnimationEffect) => void;
+  onPatch?: (elementId: string, patch: Partial<SceneElement>) => void;
 }
 
 const EFFECTS: { value: AnimationEffect; label: string; desc: string }[] = [
@@ -23,7 +24,7 @@ const FONTS = [
   'Georgia', 'Verdana', 'Impact', 'Arial Black',
 ];
 
-export default function LetteringPanel({ scene, onAddText, onSetEffect }: LetteringPanelProps) {
+export default function LetteringPanel({ scene, onAddText, onSetEffect, onPatch }: LetteringPanelProps) {
   const addElement    = useProjectStore((s) => s.addElement);
   const updateElement = useProjectStore((s) => s.updateElement);
   const removeElement = useProjectStore((s) => s.removeElement);
@@ -59,14 +60,17 @@ export default function LetteringPanel({ scene, onAddText, onSetEffect }: Letter
 
   function handleFontChange(el: SceneElement, fontFamily: string) {
     updateElement(scene.id, el.id, { fontFamily });
+    onPatch?.(el.id, { fontFamily });
   }
 
   function handleSizeChange(el: SceneElement, fontSize: number) {
     updateElement(scene.id, el.id, { fontSize });
+    onPatch?.(el.id, { fontSize });
   }
 
   function handleColorChange(el: SceneElement, fill: string) {
     updateElement(scene.id, el.id, { fill });
+    onPatch?.(el.id, { fill });
   }
 
   return (

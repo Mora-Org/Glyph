@@ -12,6 +12,7 @@ import EditorShell from '@/components/ui/EditorShell';
 import SceneList from '@/components/timeline/SceneList';
 import ElementTimeline from '@/components/timeline/ElementTimeline';
 import LetteringPanel from '@/components/typography/LetteringPanel';
+import PropertiesPanel from '@/components/ui/properties/PropertiesPanel';
 import ExportModal from '@/components/ui/ExportModal';
 import { getItemAtTime } from '@/utils/timeHelpers';
 
@@ -82,6 +83,9 @@ export default function Editor() {
         onLettering={() => setLettering((v) => !v)}
         onExport={() => setShowExport(true)}
         onBack={closeProject}
+        properties={isScene && (
+          <PropertiesPanel scene={activeItem as Scene} canvasHandle={canvasRef} />
+        )}
       >
         {/* Painel de Lettering (toggle) — coluna à esquerda do canvas */}
         {showLettering && isScene && (
@@ -93,6 +97,7 @@ export default function Editor() {
               scene={activeItem as Scene}
               onAddText={(el) => canvasRef.current?.addText(el)}
               onSetEffect={(id, fx) => canvasRef.current?.setEffect(id, fx)}
+              onPatch={(id, patch) => canvasRef.current?.applyPatch(id, patch)}
             />
           </aside>
         )}

@@ -11,6 +11,7 @@ const CANVAS_H = 720;
 export interface MainCanvasHandle {
   addText:   (el: SceneElement) => void;
   setEffect: (id: string, fx: AnimationEffect) => void;
+  applyPatch: (id: string, patch: Partial<SceneElement>) => void;
 }
 
 interface MainCanvasProps {
@@ -18,7 +19,7 @@ interface MainCanvasProps {
 }
 
 const MainCanvas = forwardRef<MainCanvasHandle, MainCanvasProps>(function MainCanvas({ scene }, ref) {
-  const { canvasRef, fabricRef, addImage, addVideo, addGif, addText, setElementEffect } =
+  const { canvasRef, fabricRef, addImage, addVideo, addGif, addText, setElementEffect, applyPatch } =
     useFabricCanvas({ sceneId: scene.id, width: CANVAS_W, height: CANVAS_H });
 
   const addElement = useProjectStore((s) => s.addElement);
@@ -27,7 +28,8 @@ const MainCanvas = forwardRef<MainCanvasHandle, MainCanvasProps>(function MainCa
   useImperativeHandle(ref, () => ({
     addText,
     setEffect: setElementEffect,
-  }), [addText, setElementEffect]);
+    applyPatch,
+  }), [addText, setElementEffect, applyPatch]);
 
   // Carrega elementos da cena
   useEffect(() => {

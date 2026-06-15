@@ -10,6 +10,7 @@ interface NumFieldProps {
   unit?: string;
   decimals?: number;
   onChange: (value: number) => void;
+  onCommit?: () => void;
   disabled?: boolean;
   width?: number | string;
 }
@@ -22,6 +23,7 @@ export function NumField({
   unit,
   decimals = 0,
   onChange,
+  onCommit,
   disabled,
   width = 60,
 }: NumFieldProps) {
@@ -47,11 +49,12 @@ export function NumField({
       dragRef.current = null;
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
+      onCommit?.();
     };
 
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
-  }, [editing, value, step, min, max, onChange]);
+  }, [editing, value, step, min, max, onChange, onCommit]);
 
   const handleDoubleClick = () => {
     setDraft(value.toFixed(decimals));
@@ -63,6 +66,7 @@ export function NumField({
     const parsed = parseFloat(draft);
     if (!isNaN(parsed)) onChange(clamp(parsed));
     setEditing(false);
+    onCommit?.();
   };
 
   const display = `${value.toFixed(decimals)}${unit ?? ''}`;
