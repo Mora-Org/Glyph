@@ -1,0 +1,237 @@
+/* ============================================================================
+   Glyph Design System — Tokens
+   Editorial, dark-first. Midnight Indigo + Vanilla Cream + editorial yellow.
+   ============================================================================ */
+
+/* ─── Web fonts ─────────────────────────────────────────────────────────────
+   Fraunces — variable serif (display)
+   Geist Sans — UI sans
+   Geist Mono — technical / data
+   Loaded from Google Fonts here for portability. For offline / production,
+   drop variable TTFs into fonts/ and swap the @font-face blocks below.
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* All three families served locally as variable fonts. */
+@font-face {
+  font-family: 'Geist';
+  src: url('fonts/Geist_wght_.woff2') format('woff2-variations'),
+       url('fonts/Geist_wght_.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fraunces';
+  src: url('fonts/Fraunces[SOFT,WONK,opsz,wght].ttf') format('truetype-variations'),
+       url('fonts/Fraunces[SOFT,WONK,opsz,wght].ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fraunces';
+  src: url('fonts/Fraunces-Italic[SOFT,WONK,opsz,wght].ttf') format('truetype-variations'),
+       url('fonts/Fraunces-Italic[SOFT,WONK,opsz,wght].ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('fonts/GeistMono[wght].ttf') format('truetype-variations'),
+       url('fonts/GeistMono[wght].ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ─── Color: surfaces ─────────────────────────────────────────────── */
+  --bg-deep:        #1A1F33;   /* Midnight Indigo — app background */
+  --bg-surface:     #232940;   /* panels, cards, sidebars */
+  --bg-elevated:    #2D344D;   /* modals, popovers, dropdowns */
+  --border:         #3A4160;   /* 1px hairline dividers */
+  --border-strong:  #4A526F;   /* hover/focus on dividers */
+
+  /* ─── Color: text ─────────────────────────────────────────────────── */
+  --text-primary:   #F0E7D5;   /* Vanilla Cream */
+  --text-secondary: #A8A294;   /* desaturated cream */
+  --text-muted:     #6B6859;   /* placeholders, disabled */
+
+  /* ─── Color: accent (editorial yellow — once per screen) ─────────── */
+  --accent:         #E8B547;
+  --accent-hover:   #F0C25A;
+  --accent-press:   #D9A33A;
+  --accent-soft:    rgba(232, 181, 71, 0.12);  /* tints, ring backgrounds */
+  --accent-ring:    rgba(232, 181, 71, 0.5);   /* focus ring */
+
+  /* ─── Color: semantic (rare) ──────────────────────────────────────── */
+  --danger:         #8B2838;   /* Bordeaux — errors only */
+  --danger-soft:    rgba(139, 40, 56, 0.14);
+  --success:        #6B8A5A;   /* sage — success only */
+  --success-soft:   rgba(107, 138, 90, 0.14);
+
+  /* ─── Type: families ──────────────────────────────────────────────── */
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --font-sans:    'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:    'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ─── Type: scale ─────────────────────────────────────────────────── */
+  --fs-display-xl: 64px;
+  --fs-display-l:  48px;
+  --fs-display-m:  36px;
+  --fs-h1:         20px;
+  --fs-h2:         16px;
+  --fs-h3:         14px;
+  --fs-body:       14px;
+  --fs-body-sm:    13px;
+  --fs-label:      11px;
+  --fs-label-sm:   10px;
+
+  /* ─── Type: weight + tracking ─────────────────────────────────────── */
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-black:    900;
+
+  --tracking-tight:    -0.02em;
+  --tracking-tighter:  -0.04em;
+  --tracking-normal:    0;
+  --tracking-wide:      0.04em;
+  --tracking-mono:      0.08em;
+
+  --lh-display: 0.95;
+  --lh-tight:   1.15;
+  --lh-body:    1.5;
+
+  /* ─── Spacing (4px grid) ──────────────────────────────────────────── */
+  --space-0:  0;
+  --space-1:  2px;
+  --space-2:  4px;
+  --space-3:  6px;
+  --space-4:  8px;
+  --space-5:  12px;
+  --space-6:  16px;
+  --space-7:  20px;
+  --space-8:  24px;
+  --space-9:  32px;
+  --space-10: 48px;
+  --space-11: 64px;
+
+  /* ─── Radii ───────────────────────────────────────────────────────── */
+  --r-sm:   4px;
+  --r-md:   6px;
+  --r-lg:   10px;
+  --r-pill: 999px;
+
+  /* ─── Layout ──────────────────────────────────────────────────────── */
+  --layout-topbar:        40px;
+  --layout-sidebar-left:  224px;
+  --layout-sidebar-right: 280px;
+  --layout-lettering:     208px;
+  --layout-timeline:      180px;
+
+  /* ─── Shadows (sparingly) ─────────────────────────────────────────── */
+  --shadow-modal: 0 24px 64px -16px rgba(0,0,0,0.5);
+
+  /* ─── Motion ──────────────────────────────────────────────────────── */
+  --dur-instant:  120ms;
+  --dur-fast:     200ms;
+  --dur-modal:    300ms;
+  --ease-editorial: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ============================================================================
+   Semantic type — drop-in classes for headings, body, labels, code
+   ============================================================================ */
+
+.glyph-display-xl,
+.glyph-display-l,
+.glyph-display-m {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  letter-spacing: var(--tracking-tighter);
+  line-height: var(--lh-display);
+  color: var(--text-primary);
+  font-variation-settings: 'opsz' 144, 'SOFT' 30, 'WONK' 0;
+}
+.glyph-display-xl { font-size: var(--fs-display-xl); }
+.glyph-display-l  { font-size: var(--fs-display-l); }
+.glyph-display-m  { font-size: var(--fs-display-m); }
+
+.glyph-h1,
+.glyph-h2,
+.glyph-h3 {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--lh-tight);
+  color: var(--text-primary);
+}
+.glyph-h1 { font-size: var(--fs-h1); }
+.glyph-h2 { font-size: var(--fs-h2); }
+.glyph-h3 { font-size: var(--fs-h3); }
+
+.glyph-body,
+.glyph-body-sm {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+  color: var(--text-primary);
+}
+.glyph-body    { font-size: var(--fs-body); }
+.glyph-body-sm { font-size: var(--fs-body-sm); color: var(--text-secondary); }
+
+.glyph-label,
+.glyph-label-sm {
+  font-family: var(--font-mono);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.glyph-label    { font-size: var(--fs-label); }
+.glyph-label-sm { font-size: var(--fs-label-sm); }
+
+.glyph-mono,
+.glyph-data {
+  font-family: var(--font-mono);
+  font-weight: var(--fw-regular);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-label);
+  color: var(--text-secondary);
+}
+.glyph-data { color: var(--text-primary); }
+
+/* ============================================================================
+   Reset baseline (scoped)
+   ============================================================================ */
+
+.glyph-root {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.glyph-root *,
+.glyph-root *::before,
+.glyph-root *::after {
+  box-sizing: border-box;
+}
+
+/* ============================================================================
+   Utility: focus ring
+   ============================================================================ */
+
+.glyph-focus:focus-visible {
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 1px;
+}

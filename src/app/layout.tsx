@@ -9,7 +9,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <head>
+        <link rel="preload" href="/fonts/Geist_wght_.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/Fraunces[SOFT,WONK,opsz,wght].ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
+      </head>
+      <body className="glyph-root">{children}</body>
     </html>
   );
 }

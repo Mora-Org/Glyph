@@ -1,10 +1,15 @@
-# PEG — Gerador de Ensaios Visuais
+# Glyph — O Respiro do Ensaio Visual
 
-Software desktop open-source para criação de ensaios visuais e apresentações com controle estético granular. Focado em assets (imagens, GIFs, vídeos) e cenas programáveis — sem a complexidade de editores de vídeo tradicionais como Premiere ou DaVinci.
+Software desktop open-source focado em **autoria visual, tipografia avançada e ensaios experimentais**. O Glyph afasta-se da edição linear tradicional para focar no controle granular da estética e da narrativa visual.
 
-## Por que PEG?
+## A Visão de Futuro: Core vs. Obsidian
 
-Editores de vídeo convencionais são pensados para produção linear. O PEG é pensado para **lettering dinâmico, composição visual expressiva e controle total de tipografia** — ideal para criadores que trabalham com identidade visual, motion design e ensaios audiovisuais.
+O projeto seguirá dois caminhos complementares para atender diferentes necessidades de hardware e criatividade:
+
+*   **Glyph Obsidian (Experimental/Heavy):** Nosso "playground" de inovação. Inclui funcionalidades de IA de ponta, como a **VOID Engine** (AI Video Inpainting consciente de física). Exige hardware robusto (GPUs com 12GB+ VRAM) e pode apresentar instabilidades devido à natureza experimental das features.
+*   **Glyph Core (Stable/Light):** A versão essencial, extremamente leve, polida e estável. Para quem precisa de um motor de lettering e composição visual sólido sem a necessidade de IA generativa pesada.
+
+**Atualmente, estamos construindo o Glyph Core, que servirá de alicerce para ambos os caminhos.**
 
 ## Stack Tecnológico
 
@@ -22,11 +27,6 @@ Editores de vídeo convencionais são pensados para produção linear. O PEG é 
 - Leitura direta de pastas locais (sem upload)
 - Suporte nativo a Fontes (`.ttf`, `.otf`), Imagens, Vídeos e GIFs
 
-### Motor de Cenas (Timeline + Canvas)
-- Projeto estruturado como lista de **Cenas** com duração configurável
-- Drag & drop para posicionar, redimensionar e sobrepor elementos
-- Cada elemento possui sua própria linha do tempo dentro da cena
-- Transições: corte seco, fade e outros
 - **Pausas Ativas**: blocos de tempo vazios (tela preta, ruído VHS, cor sólida)
 
 ### Tipografia Avançada (Lettering Dinâmico)

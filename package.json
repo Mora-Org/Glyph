@@ -17,6 +17,7 @@
     "@tauri-apps/api": "^2.10.1",
     "fabric": "latest",
     "gifler": "^0.1.0",
+    "lucide-react": "^1.7.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",

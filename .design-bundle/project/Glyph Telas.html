@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<title>Glyph — Telas</title>
+<link rel="stylesheet" href="ds/colors_and_type.css" />
+<style>
+  html, body { margin: 0; height: 100%; background: #0d1020; color: var(--text-primary); }
+  body { font-family: var(--font-sans); }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+  button, input { font-family: inherit; }
+  /* Faux-window chrome wrapper used inside artboards */
+  .glyph-window {
+    width: 100%; height: 100%; display: flex; flex-direction: column;
+    background: var(--bg-deep); border-radius: 6px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .glyph-titlebar {
+    height: 26px; flex-shrink: 0; background: #15192A;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px; padding: 0 10px;
+  }
+  .glyph-titlebar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+  .glyph-titlebar .title {
+    font-family: var(--font-mono); font-size: 9.5px; color: var(--text-muted);
+    letter-spacing: 0.10em; text-transform: uppercase; margin-left: 4px;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+
+<script type="text/babel" src="components/Icons.jsx"></script>
+<script type="text/babel" src="components/Button.jsx"></script>
+<script type="text/babel" src="components/Input.jsx"></script>
+<script type="text/babel" src="components/Topbar.jsx"></script>
+<script type="text/babel" src="components/Sidebar.jsx"></script>
+<script type="text/babel" src="components/Properties.jsx"></script>
+<script type="text/babel" src="components/Canvas.jsx"></script>
+<script type="text/babel" src="components/Timeline.jsx"></script>
+<script type="text/babel" src="components/Editor.jsx"></script>
+<script type="text/babel" src="components/Dashboard.jsx"></script>
+<script type="text/babel" src="components/Modals.jsx"></script>
+<script type="text/babel" src="components/Extras.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#E8B547",
+  "showRuler": true,
+  "headlineCopy": "O respiro do ensaio visual."
+}/*EDITMODE-END*/;
+
+function Window({ title, children }) {
+  return (
+    <div className="glyph-window" data-screen-label="window">
+      <div className="glyph-titlebar">
+        <div className="dot" /><div className="dot" /><div className="dot" />
+        <div className="title">{title}</div>
+      </div>
+      <div style={{ flex: 1, minHeight: 0, position: 'relative', overflow: 'hidden' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  // Apply accent override
+  React.useEffect(() => {
+    document.documentElement.style.setProperty('--accent', tweaks.accent);
+    // derive hover/press
+    document.documentElement.style.setProperty('--accent-soft', `${tweaks.accent}1f`);
+    document.documentElement.style.setProperty('--accent-ring', `${tweaks.accent}80`);
+  }, [tweaks.accent]);
+
+  return (
+    <>
+      <DesignCanvas
+        title="Glyph — Telas do app"
+        subtitle="Desktop · Tauri + Next.js · Glyph DS"
+      >
+        <DCSection id="entry" title="01 · Entrada">
+          <DCArtboard id="dashboard" label="Dashboard — projetos recentes" width={1280} height={820}>
+            <Window title="Glyph — Dashboard">
+              <Dashboard />
+            </Window>
+          </DCArtboard>
+          <DCArtboard id="dashboard-empty" label="Dashboard — empty state" width={1280} height={820}>
+            <Window title="Glyph — Dashboard (vazio)">
+              <Dashboard empty />
+            </Window>
+          </DCArtboard>
+          <DCArtboard id="new-project" label="Modal — Novo Projeto" width={1280} height={820}>
+            <Window title="Glyph — Novo Projeto">
+              <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+                <Dashboard />
+                <NewProjectModal />
+              </div>
+            </Window>
+          </DCArtboard>
+          <DCArtboard id="new-project-error" label="Novo Projeto — validação" width={1280} height={820}>
+            <Window title="Glyph — Validação">
+              <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+                <Dashboard />
+                <NewProjectModal error />
+              </div>
+            </Window>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="editor" title="02 · Editor">
+          <DCArtboard id="editor-full" label="Editor — composição completa" width={1440} height={900}>
+            <Window title="Glyph — Editor · Ensaio Verão 2026">
+              <Editor />
+            </Window>
+          </DCArtboard>
+          <DCArtboard id="editor-empty" label="Editor — cena em branco" width={1440} height={900}>
+            <Window title="Glyph — Editor · cena em branco">
+              <Editor emptyCanvas />
+            </Window>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="modals" title="03 · Modais & estados">
+          <DCArtboard id="lettering" label="Lettering Studio" width={1440} height={900}>
+            <Window title="Glyph — Lettering Studio">
+              <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+                <Editor />
+                <LetteringStudio />
+              </div>
+            </Window>
+          </DCArtboard>
+          <DCArtboard id="export-idle" label="Exportação — config" width={1440} height={900}>
+            <Window title="Glyph — Exportar">
+              <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+                <Editor />
+                <ExportModal />
+              </div>
+            </Window>
+          </DCArtboard>
+          <DCArtboard id="export-rendering" label="Exportação — renderizando" width={1440} height={900}>
+            <Window title="Glyph — Renderizando">
+              <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+                <Editor />
+                <ExportModal mode="rendering" />
+              </div>
+            </Window>
+          </DCArtboard>
+          <DCArtboard id="error" label="Erro — FFmpeg ausente" width={1440} height={900}>
+            <Window title="Glyph — Erro">
+              <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+                <Editor />
+                <ErrorModal />
+              </div>
+            </Window>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="settings" title="04 · Configurações">
+          <DCArtboard id="settings-screen" label="Configurações" width={1280} height={820}>
+            <Window title="Glyph — Configurações">
+              <Settings />
+            </Window>
+          </DCArtboard>
+          <DCArtboard id="settings-edit-path" label="Inline edit — FFmpeg path" width={560} height={340}>
+            <SettingsInlineEditPath />
+          </DCArtboard>
+          <DCArtboard id="settings-edit-color" label="Inline edit — Cor de acento" width={560} height={420}>
+            <SettingsInlineEditColor />
+          </DCArtboard>
+          <DCArtboard id="about" label="Sobre · About" width={1280} height={900}>
+            <Window title="Glyph — Sobre">
+              <AboutScreen />
+            </Window>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="feedback" title="05 · Feedback & micro-estados">
+          <DCArtboard id="toasts" label="Toasts — variantes (success / error / info / progress)" width={420} height={620}>
+            <div style={{
+              padding: 24, height: '100%', background: 'var(--bg-deep)',
+              display: 'flex', flexDirection: 'column', gap: 12,
+              justifyContent: 'center',
+            }}>
+              <Toast variant="success"
+                title="Projeto salvo."
+                body="Ensaio Verão 2026 · há 2s · ~/Mora/Glyph/projects/"
+              />
+              <Toast variant="error"
+                title="Falha ao exportar."
+                body="FFmpeg retornou código 1. Verifique o log da renderização."
+                action={[{ label: 'Ver log', primary: true }, { label: 'Dispensar' }]}
+              />
+              <Toast variant="info"
+                title="Atalho disponível."
+                body="Pressione T para criar um texto rápido na cena ativa."
+              />
+              <Toast variant="progress"
+                title="Renderizando Cena 02"
+                body="Frame 412 / 720 · NVENC · ~ 8s restantes"
+              />
+            </div>
+          </DCArtboard>
+
+          <DCArtboard id="toast-in-context" label="Toast — em contexto (canto inferior direito)" width={1280} height={820}>
+            <Window title="Glyph — Em contexto">
+              <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                <Dashboard />
+                <ToastStack>
+                  <Toast variant="success"
+                    title="Projeto salvo."
+                    body="há 2s · ~/Mora/Glyph/projects/"
+                  />
+                </ToastStack>
+              </div>
+            </Window>
+          </DCArtboard>
+
+          <DCArtboard id="card-states" label="Project Card — estados (default / hover / focus)" width={780} height={360}>
+            <div style={{
+              padding: 24, height: '100%', background: 'var(--bg-deep)',
+              display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14,
+              alignItems: 'start',
+            }}>
+              <div>
+                <ProjectCardDefault p={{ name: 'Ensaio Verão 2026', mod: '2 dias atrás', dur: '00:48', scenes: 12, hero: 'Respiro' }} />
+                <CardLabel>Default</CardLabel>
+              </div>
+              <div>
+                <ProjectCardHover p={{ name: 'Ensaio Verão 2026', mod: '2 dias atrás', dur: '00:48', scenes: 12, hero: 'Respiro' }} />
+                <CardLabel accent>Hover · 120ms</CardLabel>
+              </div>
+              <div>
+                <ProjectCardFocus p={{ name: 'Ensaio Verão 2026', mod: '2 dias atrás', dur: '00:48', scenes: 12, hero: 'Respiro' }} />
+                <CardLabel>Keyboard focus</CardLabel>
+              </div>
+            </div>
+          </DCArtboard>
+
+          <DCArtboard id="drag-canvas" label="Drag & drop — asset → canvas" width={1280} height={820}>
+            <Window title="Glyph — Arrastando capa-verao.jpg">
+              <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                <Editor />
+                <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+                  <div style={{
+                    position: 'absolute', left: 240, top: 70, right: 280, bottom: 280,
+                    border: '1.5px dashed var(--accent)', borderRadius: 4,
+                    background: 'rgba(232,181,71,0.06)',
+                  }} />
+                  <div style={{
+                    position: 'absolute', left: '46%', top: '35%',
+                    transform: 'translate(-50%, -50%)',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                    fontFamily: 'var(--font-mono)', fontSize: 11,
+                    color: 'var(--accent)', letterSpacing: '0.14em', textTransform: 'uppercase',
+                  }}>
+                    <IconPlus size={20} />
+                    <span>Soltar para adicionar à Cena 02</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: 9, letterSpacing: '0.10em' }}>0:00 → 0:08 · timeline ajusta automaticamente</span>
+                  </div>
+                  {/* drag ghost near cursor */}
+                  <div style={{
+                    position: 'absolute', left: '54%', top: '40%',
+                    transform: 'rotate(-2deg)', opacity: 0.92,
+                    boxShadow: '0 12px 28px -10px rgba(0,0,0,0.7)',
+                  }}>
+                    <div style={{
+                      width: 150, background: 'var(--bg-elevated)',
+                      border: '1px solid var(--accent)', borderRadius: 4,
+                      display: 'flex', flexDirection: 'column', overflow: 'hidden',
+                    }}>
+                      <div style={{
+                        aspectRatio: '4 / 3',
+                        background: 'linear-gradient(135deg, #5a4a2e, #2a2418)',
+                        position: 'relative',
+                      }}>
+                        <div style={{ position: 'absolute', inset: 8, border: '1px solid rgba(240,231,213,0.15)' }} />
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 8px' }}>
+                        <span style={{ color: 'var(--accent)', display: 'flex' }}><IconImage size={11} /></span>
+                        <span style={{
+                          fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-primary)',
+                          letterSpacing: '0.04em',
+                        }}>capa-verao.jpg</span>
+                      </div>
+                    </div>
+                    <div style={{
+                      position: 'absolute', top: -6, right: -6,
+                      background: 'var(--accent)', color: '#1A1F33',
+                      width: 18, height: 18, borderRadius: '50%',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700,
+                    }}>1</div>
+                  </div>
+                </div>
+              </div>
+            </Window>
+          </DCArtboard>
+
+          <DCArtboard id="ctx-scene" label="Context menu — Scene Card" width={520} height={460}>
+            <div style={{
+              padding: 24, height: '100%', background: 'var(--bg-deep)',
+              position: 'relative',
+            }}>
+              <div style={{
+                width: 200, height: 120, marginLeft: 30, marginTop: 20,
+                background: '#15192A', border: '1px solid var(--accent)',
+                borderRadius: 4, position: 'relative', overflow: 'hidden',
+                boxShadow: '0 0 0 3px rgba(232,181,71,0.18)',
+              }}>
+                <div style={{
+                  position: 'absolute', left: 12, top: 24,
+                  fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 36,
+                  color: 'var(--text-primary)', letterSpacing: '-0.04em',
+                }}>Respiro</div>
+                <div style={{
+                  position: 'absolute', left: 0, bottom: 0, padding: '6px 8px',
+                  fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)',
+                  letterSpacing: '0.10em', textTransform: 'uppercase',
+                }}>02 · Cena 02 · 8s</div>
+              </div>
+              <ContextMenu x={210} y={120} label="Cena 02 · 8s" items={[
+                { icon: <IconPlay size={11} />,    label: 'Reproduzir cena',  shortcut: 'Espaço' },
+                { icon: <IconCopy size={11} />,    label: 'Duplicar',         shortcut: 'Ctrl+D', hover: true },
+                { icon: <IconType size={11} />,    label: 'Renomear',         shortcut: 'F2' },
+                { icon: <IconScissors size={11}/>, label: 'Cortar / dividir', shortcut: 'Ctrl+K' },
+                { separator: true },
+                { icon: <IconPause size={11} />,   label: 'Inserir pausa antes' },
+                { icon: <IconUpload size={11} />,  label: 'Exportar somente esta cena' },
+                { separator: true },
+                { icon: <IconTrash size={11} />,   label: 'Remover',          shortcut: 'Del', danger: true },
+              ]} />
+            </div>
+          </DCArtboard>
+
+          <DCArtboard id="ctx-element" label="Context menu — elemento no canvas" width={520} height={520}>
+            <div style={{
+              padding: 24, height: '100%', background: '#15192A',
+              position: 'relative',
+            }}>
+              <div style={{
+                position: 'absolute', left: 60, top: 90,
+                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 88,
+                color: 'var(--accent)', letterSpacing: '-0.05em', lineHeight: 0.9,
+                fontVariationSettings: "'opsz' 144, 'SOFT' 30",
+              }}>Respiro</div>
+              <div style={{
+                position: 'absolute', left: 56, top: 86,
+                width: 280, height: 96, border: '1px solid var(--accent)',
+                pointerEvents: 'none',
+              }}>
+                <div style={{
+                  position: 'absolute', top: -16,
+                  fontFamily: 'var(--font-mono)', fontSize: 8.5, color: 'var(--accent)',
+                  letterSpacing: '0.14em', textTransform: 'uppercase',
+                }}>texto · respiro</div>
+                {[
+                  ['top','left'],['top','right'],['bottom','left'],['bottom','right']
+                ].map(([y, x], i) => (
+                  <div key={i} style={{
+                    position: 'absolute', [y]: -3, [x]: -3,
+                    width: 6, height: 6, background: 'var(--accent)',
+                  }} />
+                ))}
+              </div>
+              <ContextMenu x={170} y={170} label="Texto · «Respiro»" items={[
+                { icon: <IconWand size={11} />,    label: 'Abrir Lettering Studio…', shortcut: 'L' },
+                { icon: <IconType size={11} />,    label: 'Editar texto',            shortcut: 'Enter' },
+                { separator: true },
+                { icon: <IconCopy size={11} />,    label: 'Duplicar',                shortcut: 'Ctrl+D' },
+                { icon: <IconLayers size={11} />,  label: 'Trazer para frente',      shortcut: 'Ctrl+]' },
+                { icon: <IconLayers size={11} />,  label: 'Enviar para trás',        shortcut: 'Ctrl+[' },
+                { icon: <IconLock size={11} />,    label: 'Bloquear elemento' },
+                { icon: <IconEye size={11} />,     label: 'Ocultar' },
+                { separator: true },
+                { icon: <IconTrash size={11} />,   label: 'Remover',                 shortcut: 'Del', danger: true },
+              ]} />
+            </div>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="boot" title="06 · Boot">
+          <DCArtboard id="splash" label="Splash — boot do Tauri" width={1280} height={820}>
+            <Window title="Glyph — Inicializando">
+              <Splash phase="engine" />
+            </Window>
+          </DCArtboard>
+          <DCArtboard id="splash-final" label="Splash — final / pronto" width={1280} height={820}>
+            <Window title="Glyph — Pronto">
+              <Splash phase="ui" />
+            </Window>
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Acento">
+          <TweakRadio
+            label="Cor"
+            value={tweaks.accent}
+            onChange={(v) => setTweak('accent', v)}
+            options={[
+              { value: '#E8B547', label: 'Yellow' },
+              { value: '#D9684A', label: 'Amber' },
+              { value: '#7BA882', label: 'Sage' },
+              { value: '#A892D6', label: 'Lilac' },
+            ]}
+          />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

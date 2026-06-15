@@ -32,8 +32,21 @@ A **Glyph** (anteriormente PEG) é uma ferramenta de autoria visual baseada no m
 - **Fidelidade Visual:** Renderização 1:1 entre o que é visto no canvas e o arquivo final.
 
 ## 4. Roadmap de Fases (v1.4)
-1. **Fases 0-4:** Infraestrutura, Store, Canvas e Motor de Lettering/GIF (Concluídas/Testes).
+1. **Fases 0-4:** Infraestrutura, Store, Canvas e Motor de Lettering/GIF (Concluídas).
 2. **Fase 5: Exportação:** Pipeline Rust/FFmpeg (Em Desenvolvimento).
-3. **Fase 6: Branded Refactor:** Migração para identidade Glyph e refatoração estética da marca Mora.
+3. **Fase 6: Branded Refactor:** Migração para identidade Glyph e Estética Mora (Em execução).
 4. **Fase 7: Audio System:** Trilhas, Sync e Noise Removal.
 5. **Fase 8: Artistic Tools:** Borracha (Eraser), Clipping Masks e HSL.
+6. **Fase 9: VOID Engine (AI Video Inpainting):** Exclusivo **Glyph Obsidian**.
+
+---
+
+## 5. Estratégia de Produto: Core vs. Obsidian
+O Glyph será bifurcado em duas rotas para equilibrar inovação de ponta e estabilidade extrema:
+
+*   **Glyph Obsidian (Experimental/Heavy):** Foco em ferramentas de AI generativa e manipulação visual pesada. Inclui a **VOID Engine** e novos motores experimentais. Requisito de hardware elevado (12GB+ VRAM).
+*   **Glyph Core (Stable/Light):** Foco no essencial bem feito. Leve, rápido e extremamente polido. Sem ferramentas de AI pesadas, garantindo portabilidade em hardware modesto.
+
+---
+> [!IMPORTANT]
+> **Prioridade Estratégica:** O desenvolvimento atual foca no **Glyph Core**, que servirá de alicerce tanto para a versão estável quanto para a Obsidian (experimental/IA). A transição oficial para o nome **Glyph** está ocorrendo na Fase 6.

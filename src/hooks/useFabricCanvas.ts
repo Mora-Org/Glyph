@@ -22,10 +22,15 @@ export function useFabricCanvas({ sceneId, width, height }: UseFabricCanvasOptio
   useEffect(() => {
     if (!canvasRef.current || fabricRef.current) return;
 
+    let cancelled = false;
     let canvas: FabricCanvas;
 
     import('fabric').then(({ Canvas }) => {
-      canvas = new Canvas(canvasRef.current!, {
+      // Guarda contra double-invoke do React Strict Mode: cleanup pode ter rodado
+      // antes desta promise resolver
+      if (cancelled || !canvasRef.current) return;
+
+      canvas = new Canvas(canvasRef.current, {
         width,
         height,
         backgroundColor: '#000000',
@@ -33,7 +38,7 @@ export function useFabricCanvas({ sceneId, width, height }: UseFabricCanvasOptio
         selection: true,
       });
 
-      applyPegControls(canvas);
+      applyGlyphControls(canvas);
 
       canvas.on('object:modified', (e) => {
         const obj = e.target as FabricObject & { pegId?: string };
@@ -55,6 +60,7 @@ export function useFabricCanvas({ sceneId, width, height }: UseFabricCanvasOptio
     });
 
     return () => {
+      cancelled = true;
       animationLoops.forEach((cancel) => cancel());
       animationLoops.clear();
       fabricRef.current?.dispose();
@@ -281,9 +287,9 @@ function applyEffect(
   animationLoops.set(id, () => { running = false; });
 }
 
-// ── Estética PEG nos handles ──────────────────────────────────────────────────
+// ── Estética Glyph nos handles ────────────────────────────────────────────────
 
-function applyPegControls(canvas: FabricCanvas) {
+function applyGlyphControls(canvas: FabricCanvas) {
   import('fabric').then(({ controlsUtils, Control }) => {
     const { scalingX, scalingY, scalingEqually, rotationWithSnapping } = controlsUtils;
 

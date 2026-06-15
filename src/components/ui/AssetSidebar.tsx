@@ -42,11 +42,11 @@ export default function AssetSidebar({ onDragStart }: AssetSidebarProps) {
   };
 
   return (
-    <aside className="flex flex-col gap-3 h-full w-56 border-r border-white/8 p-3 overflow-hidden">
+    <aside className="flex flex-col gap-4 h-full w-56 border-r border-white/8 px-7 py-7 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mt-2">
         <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Assets</span>
-        <label className="cursor-pointer glass-button text-xs px-2 py-1">
+        <label className="cursor-pointer flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-all">
           + Pasta
           <input
             type="file"

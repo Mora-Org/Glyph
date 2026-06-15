@@ -1,31 +1,174 @@
 @import "tailwindcss";
 
-@theme {
-  /* Paleta "Vibrant Dark" */
-  --color-surface:         #0a0a0a;
-  --color-surface-raised:  #111111;
-  --color-surface-overlay: #1a1a1a;
+/* ============================================================================
+   Glyph Design System — Tokens
+   Midnight Indigo + Vanilla Cream + editorial yellow accent.
+   Fraunces (display serif, variable) · Geist Sans (UI) · Geist Mono (data)
+   ============================================================================ */
 
-  --color-accent-muted:    rgba(255,255,255,0.5);
-  --color-accent-faint:    rgba(255,255,255,0.08);
-
-  --color-brand-pink:   #ff2d78;
-  --color-brand-cyan:   #00e5ff;
-  --color-brand-yellow: #ffe600;
-
-  /* Tipografia */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/Geist_wght_.woff2') format('woff2-variations'),
+       url('/fonts/Geist_wght_.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
 }
 
-/* Variáveis CSS para glass (não precisam do Tailwind) */
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/fonts/Fraunces[SOFT,WONK,opsz,wght].ttf') format('truetype-variations'),
+       url('/fonts/Fraunces[SOFT,WONK,opsz,wght].ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/fonts/Fraunces-Italic[SOFT,WONK,opsz,wght].ttf') format('truetype-variations'),
+       url('/fonts/Fraunces-Italic[SOFT,WONK,opsz,wght].ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/GeistMono[wght].ttf') format('truetype-variations'),
+       url('/fonts/GeistMono[wght].ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── CSS Custom Properties ─────────────────────────────────────────── */
 :root {
-  --glass-bg:     rgba(255, 255, 255, 0.04);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur:   24px;
+  /* Surfaces */
+  --bg-deep:        #1A1F33;
+  --bg-surface:     #232940;
+  --bg-elevated:    #2D344D;
+  --border:         #3A4160;
+  --border-strong:  #4A526F;
+
+  /* Text */
+  --text-primary:   #F0E7D5;
+  --text-secondary: #A8A294;
+  --text-muted:     #6B6859;
+
+  /* Accent */
+  --accent:         #E8B547;
+  --accent-hover:   #F0C25A;
+  --accent-press:   #D9A33A;
+  --accent-soft:    rgba(232, 181, 71, 0.12);
+  --accent-ring:    rgba(232, 181, 71, 0.5);
+
+  /* Semantic */
+  --danger:         #8B2838;
+  --danger-soft:    rgba(139, 40, 56, 0.14);
+  --success:        #6B8A5A;
+  --success-soft:   rgba(107, 138, 90, 0.14);
+
+  /* Type */
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --font-sans:    'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:    'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Type scale */
+  --fs-display-xl: 64px;
+  --fs-display-l:  48px;
+  --fs-display-m:  36px;
+  --fs-h1:         20px;
+  --fs-h2:         16px;
+  --fs-h3:         14px;
+  --fs-body:       14px;
+  --fs-body-sm:    13px;
+  --fs-label:      11px;
+  --fs-label-sm:   10px;
+
+  /* Weights */
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-black:    900;
+
+  /* Tracking */
+  --tracking-tight:   -0.02em;
+  --tracking-tighter: -0.04em;
+  --tracking-normal:   0;
+  --tracking-wide:     0.04em;
+  --tracking-mono:     0.08em;
+
+  /* Line height */
+  --lh-display: 0.95;
+  --lh-tight:   1.15;
+  --lh-body:    1.5;
+
+  /* Spacing (4px grid) */
+  --space-1:  2px;
+  --space-2:  4px;
+  --space-3:  6px;
+  --space-4:  8px;
+  --space-5:  12px;
+  --space-6:  16px;
+  --space-7:  20px;
+  --space-8:  24px;
+  --space-9:  32px;
+  --space-10: 48px;
+  --space-11: 64px;
+
+  /* Radii */
+  --r-sm:   4px;
+  --r-md:   6px;
+  --r-lg:   10px;
+  --r-pill: 999px;
+
+  /* Layout */
+  --layout-topbar:        40px;
+  --layout-sidebar-left:  224px;
+  --layout-sidebar-right: 280px;
+  --layout-lettering:     208px;
+  --layout-timeline:      180px;
+
+  /* Shadows */
+  --shadow-modal: 0 24px 64px -16px rgba(0,0,0,0.5);
+
+  /* Motion */
+  --dur-instant:    120ms;
+  --dur-fast:       200ms;
+  --dur-modal:      300ms;
+  --ease-editorial: cubic-bezier(0.2, 0, 0, 1);
 }
 
-* {
+/* ─── Tailwind theme bridge ─────────────────────────────────────────── */
+@theme inline {
+  --color-bg-deep:       var(--bg-deep);
+  --color-bg-surface:    var(--bg-surface);
+  --color-bg-elevated:   var(--bg-elevated);
+  --color-border:        var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-text-primary:   var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted:     var(--text-muted);
+
+  --color-accent:       var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft:  var(--accent-soft);
+  --color-danger:       var(--danger);
+  --color-danger-soft:  var(--danger-soft);
+  --color-success:      var(--success);
+  --color-success-soft: var(--success-soft);
+
+  --font-display: var(--font-display);
+  --font-sans:    var(--font-sans);
+  --font-mono:    var(--font-mono);
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -33,46 +176,111 @@
 
 html, body {
   height: 100%;
-  background-color: #0a0a0a;
-  color: #ffffff;
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
   overflow: hidden;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar        { width: 4px; height: 4px; }
-::-webkit-scrollbar-track  { background: #111; }
-::-webkit-scrollbar-thumb  { background: rgba(255,255,255,0.12); border-radius: 2px; }
-
-/* Utilitários de glassmorphism */
-.glass {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+/* ─── Root app shell ─────────────────────────────────────────────────── */
+.glyph-root {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-.glass-panel {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-radius: 1rem;
+/* ─── Semantic type classes ──────────────────────────────────────────── */
+.glyph-display-xl,
+.glyph-display-l,
+.glyph-display-m {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  letter-spacing: var(--tracking-tighter);
+  line-height: var(--lh-display);
+  color: var(--text-primary);
+  font-variation-settings: 'opsz' 144, 'SOFT' 30, 'WONK' 0;
+}
+.glyph-display-xl { font-size: var(--fs-display-xl); }
+.glyph-display-l  { font-size: var(--fs-display-l);  }
+.glyph-display-m  { font-size: var(--fs-display-m);  }
+
+.glyph-h1,
+.glyph-h2,
+.glyph-h3 {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--lh-tight);
+  color: var(--text-primary);
+}
+.glyph-h1 { font-size: var(--fs-h1); }
+.glyph-h2 { font-size: var(--fs-h2); }
+.glyph-h3 { font-size: var(--fs-h3); }
+
+.glyph-body    { font-family: var(--font-sans);  font-size: var(--fs-body);    line-height: var(--lh-body); color: var(--text-primary); }
+.glyph-body-sm { font-family: var(--font-sans);  font-size: var(--fs-body-sm); line-height: var(--lh-body); color: var(--text-secondary); }
+
+.glyph-label,
+.glyph-label-sm {
+  font-family: var(--font-mono);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.glyph-label    { font-size: var(--fs-label);    }
+.glyph-label-sm { font-size: var(--fs-label-sm); }
+
+.glyph-mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.glyph-data {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
-.glass-button {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: background 150ms;
+/* ─── Focus ring ─────────────────────────────────────────────────────── */
+.glyph-focus:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 1px;
 }
 
-.glass-button:hover {
-  background: rgba(255,255,255,0.10);
+/* ─── Scrollbar ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar         { width: 6px; height: 6px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* ─── Paper texture utility ─────────────────────────────────────────── */
+.glyph-paper {
+  background-image: radial-gradient(circle at 1px 1px, rgba(240,231,213,0.04) 1px, transparent 0);
+  background-size: 14px 14px;
+}
+
+/* ─── Lettering effect keyframes ────────────────────────────────────── */
+@keyframes glyph-tremor {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25%       { transform: translate(-1px, 1px) rotate(-0.5deg); }
+  50%       { transform: translate(1px, -1px) rotate(0.5deg); }
+  75%       { transform: translate(-1px, -1px) rotate(0deg); }
+}
+
+@keyframes glyph-neon {
+  0%, 100% { opacity: 1; text-shadow: 0 0 8px var(--accent); }
+  50%       { opacity: 0.7; text-shadow: 0 0 2px var(--accent); }
+}
+
+@keyframes glyph-vibration {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-2px); }
+  75%       { transform: translateX(2px); }
 }
