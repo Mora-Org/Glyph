@@ -5,6 +5,7 @@ import { useProjectStore } from '@/store/projectStore';
 import type { AudioElement } from '@/store/projectStore';
 import { PIXELS_PER_SECOND, TRACK_HEIGHT } from './TimelineConstants';
 import { Mic, Music, Trash2, Volume2, Plus } from 'lucide-react';
+import Waveform from './Waveform';
 
 const AUDIO_EXTS  = '.mp3,.wav,.ogg,.m4a,.aac,.flac';
 const LANE_HEIGHT = TRACK_HEIGHT * 2;
@@ -17,39 +18,55 @@ function AudioBlock({ element, trackType, onRemove, onToggleNR }: {
   onRemove: () => void;
   onToggleNR: () => void;
 }) {
+  // Áudio em sage contido: VO mais presente, BGM lê como textura de fundo.
   const color = trackType === 'vo'
-    ? 'bg-cyan-500/20 border-cyan-500/35'
-    : 'bg-pink-500/20 border-pink-500/35';
+    ? 'bg-success-soft border-success/40'
+    : 'bg-success/5 border-success/20';
 
   const left  = element.startTime * PIXELS_PER_SECOND;
   const width = Math.max(element.duration * PIXELS_PER_SECOND, 32);
+  // Densidade do waveform proporcional à largura do clipe (preview, não análise real).
+  // VO lê mais presente; BGM fica como textura de fundo.
+  const bars = Math.max(8, Math.min(80, Math.round(width / 5)));
 
   return (
     <div
-      className={`absolute top-1.5 bottom-1.5 rounded-md border ${color} flex items-center px-2 gap-1 group/block overflow-hidden transition-all hover:brightness-110`}
+      className={`absolute top-1.5 bottom-1.5 rounded-md border ${color} group/block overflow-hidden transition-all hover:brightness-110`}
       style={{ left, width }}
     >
-      <span className="text-[9px] font-mono truncate flex-1 text-white/70 select-none">
-        {element.src.split('/').pop() ?? `${element.duration}s`}
-      </span>
-      {/* Noise Reduction toggle — só visível para VO */}
-      {trackType === 'vo' && (
-        <button
-          onClick={onToggleNR}
-          title={element.noiseReduction ? 'Noise Reduction: ON' : 'Noise Reduction: OFF'}
-          className={`flex-shrink-0 transition-colors ${element.noiseReduction ? 'text-green-400/80' : 'text-white/20 hover:text-white/50'}`}
-        >
-          <Volume2 size={9} />
-        </button>
-      )}
-      <button
-        onClick={onRemove}
-        className="flex-shrink-0 text-white/20 hover:text-red-400/70 transition-colors opacity-0 group-hover/block:opacity-100"
+      {/* Waveform procedural ao fundo */}
+      <div
+        className="absolute inset-0 px-1 py-1.5 pointer-events-none"
+        style={{ opacity: trackType === 'vo' ? 0.5 : 0.28 }}
       >
-        <Trash2 size={9} />
-      </button>
+        <Waveform seed={element.id} bars={bars} color="var(--success)" />
+      </div>
+
+      {/* Conteúdo sobre o waveform */}
+      <div className="relative z-10 flex items-center h-full px-2 gap-1">
+        <span className="text-[9px] font-mono truncate flex-1 text-text-secondary tabular-nums select-none">
+          {element.src.split('/').pop() ?? `${element.duration}s`}
+        </span>
+        {/* Noise Reduction toggle — só visível para VO */}
+        {trackType === 'vo' && (
+          <button
+            onClick={onToggleNR}
+            title={element.noiseReduction ? 'Noise Reduction: ON' : 'Noise Reduction: OFF'}
+            className={`flex-shrink-0 transition-colors ${element.noiseReduction ? 'text-success' : 'text-text-muted hover:text-text-secondary'}`}
+          >
+            <Volume2 size={9} />
+          </button>
+        )}
+        <button
+          onClick={onRemove}
+          className="flex-shrink-0 text-text-muted hover:text-danger transition-colors opacity-0 group-hover/block:opacity-100"
+        >
+          <Trash2 size={9} />
+        </button>
+      </div>
+
       {/* Barra de volume */}
-      <div className="absolute bottom-0 left-0 h-px bg-white/20" style={{ width: `${element.volume * 100}%` }} />
+      <div className="absolute bottom-0 left-0 h-px bg-success/50 z-20" style={{ width: `${element.volume * 100}%` }} />
     </div>
   );
 }
@@ -82,19 +99,19 @@ export function AudioTrackLabels() {
 
   if (tracks.length === 0) {
     return (
-      <div className="flex items-center gap-3 px-3 py-2 border-t border-white/8">
-        <span className="text-[9px] font-mono text-white/20 uppercase tracking-wider">Áudio</span>
+      <div className="flex items-center gap-3 px-3 py-2 border-t border-border">
+        <span className="text-[9px] font-mono text-text-muted uppercase tracking-[0.08em]">Áudio</span>
         <button
           onClick={() => addAudioTrack('vo')}
           data-testid="add-audio-vo"
-          className="flex items-center gap-1 text-[10px] font-mono text-white/30 hover:text-cyan-400/80 transition-colors"
+          className="flex items-center gap-1 text-[10px] font-mono text-text-muted hover:text-success transition-colors"
         >
           <Plus size={9} /><Mic size={9} /> VO
         </button>
         <button
           onClick={() => addAudioTrack('bgm')}
           data-testid="add-audio-bgm"
-          className="flex items-center gap-1 text-[10px] font-mono text-white/30 hover:text-pink-400/80 transition-colors"
+          className="flex items-center gap-1 text-[10px] font-mono text-text-muted hover:text-success transition-colors"
         >
           <Plus size={9} /><Music size={9} /> BGM
         </button>
@@ -103,30 +120,29 @@ export function AudioTrackLabels() {
   }
 
   return (
-    <div className="flex flex-col border-t border-white/8">
+    <div className="flex flex-col border-t border-border">
       {tracks.map((track) => {
-        const Icon      = track.type === 'vo' ? Mic : Music;
-        const iconColor = track.type === 'vo' ? 'text-cyan-400/60' : 'text-pink-400/60';
+        const Icon = track.type === 'vo' ? Mic : Music;
         return (
           <div
             key={track.id}
-            className="flex flex-col justify-center gap-1 px-3 border-b border-white/5 last:border-0"
+            className="flex flex-col justify-center gap-1 px-3 border-b border-border last:border-0"
             style={{ height: LANE_HEIGHT }}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <Icon size={10} className={iconColor} />
-                <span className="text-[10px] font-mono text-white/60 truncate max-w-[60px]">{track.name}</span>
+                <Icon size={10} className="text-success" />
+                <span className="text-[10px] font-mono text-text-secondary truncate max-w-[60px]">{track.name}</span>
               </div>
               <button
                 onClick={() => removeAudioTrack(track.id)}
                 title="Remover trilha"
-                className="text-white/20 hover:text-red-400/70 transition-colors"
+                className="text-text-muted hover:text-danger transition-colors"
               >
                 <Trash2 size={9} />
               </button>
             </div>
-            <label className="cursor-pointer flex items-center gap-1 text-[9px] font-mono text-white/25 hover:text-white/60 transition-colors">
+            <label className="cursor-pointer flex items-center gap-1 text-[9px] font-mono text-text-muted hover:text-text-secondary transition-colors">
               <Plus size={9} /> arquivo
               <input type="file" accept={AUDIO_EXTS} className="hidden" onChange={(e) => handleAudioFile(track.id, e)} />
             </label>
@@ -135,12 +151,12 @@ export function AudioTrackLabels() {
       })}
 
       {/* Rodapé: adicionar trilha */}
-      <div className="flex items-center gap-3 px-3 py-1.5 border-t border-white/5">
-        <span className="text-[8px] font-mono text-white/20 uppercase tracking-wider">+ trilha</span>
-        <button onClick={() => addAudioTrack('vo')} className="flex items-center gap-1 text-[9px] font-mono text-cyan-400/40 hover:text-cyan-400/80 transition-colors">
+      <div className="flex items-center gap-3 px-3 py-1.5 border-t border-border">
+        <span className="text-[8px] font-mono text-text-muted uppercase tracking-[0.08em]">+ trilha</span>
+        <button onClick={() => addAudioTrack('vo')} className="flex items-center gap-1 text-[9px] font-mono text-text-muted hover:text-success transition-colors">
           <Mic size={8} /> VO
         </button>
-        <button onClick={() => addAudioTrack('bgm')} className="flex items-center gap-1 text-[9px] font-mono text-pink-400/40 hover:text-pink-400/80 transition-colors">
+        <button onClick={() => addAudioTrack('bgm')} className="flex items-center gap-1 text-[9px] font-mono text-text-muted hover:text-success transition-colors">
           <Music size={8} /> BGM
         </button>
       </div>
@@ -162,11 +178,11 @@ export function AudioTrackLanes() {
   if (tracks.length === 0) return null;
 
   return (
-    <div className="flex flex-col border-t border-white/8">
+    <div className="flex flex-col border-t border-border">
       {tracks.map((track) => (
         <div
           key={track.id}
-          className="relative border-b border-white/5 last:border-0"
+          className="relative border-b border-border last:border-0"
           style={{ height: LANE_HEIGHT }}
         >
           {track.elements.map((el) => (

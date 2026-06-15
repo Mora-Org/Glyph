@@ -56,12 +56,17 @@ export default function Playhead() {
 
   return (
     <div
-      className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-[100] cursor-ew-resize select-none pointer-events-auto"
+      className="absolute top-0 bottom-0 w-0.5 bg-accent z-[100] cursor-ew-resize select-none pointer-events-auto"
       style={{ left: project.currentTime * PIXELS_PER_SECOND }}
       onMouseDown={onMouseDown}
     >
       {/* Triângulo / handle no topo */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 clip-path-triangle" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-accent clip-path-triangle pointer-events-none" />
+
+      {/* Chip de tempo — único texto sobre amarelo na timeline */}
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-accent text-bg-deep font-mono text-[8px] tabular-nums px-1 rounded-[1px] pointer-events-none select-none whitespace-nowrap">
+        {project.currentTime.toFixed(2)}
+      </div>
 
       <style jsx>{`
         .clip-path-triangle {

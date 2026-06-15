@@ -1,6 +1,35 @@
 # Patch Notes — PEG
 Histórico de versões e aprendizados.
 
+## v0.9.3 (2026-06-15) — F5: Timeline + SceneList (transporte, waveforms, atalhos) (Claude Code)
+
+### Contexto
+Fechamento da F5 do redesign Glyph DS. A restilização editorial dos cards de cena, pausas, badges de transição, régua e playhead já vinha da sessão anterior (in-place, preservando a API de reorder dnd-kit e o eixo de tempo único x=0=t=0). Esta entrega completa os 3 critérios de aceite que faltavam: **waveforms procedurais**, **transporte de 4 botões** e **atalhos J/K/L/Espaço/.**.
+
+### Mudanças
+- `src/components/timeline/Waveform.tsx` (novo) — barras procedurais centradas (envelope = soma de senos semeada por hash do id do elemento → forma estável sem `Math.random`). Teto de 80 barras, memoizada por `(seed, n)`. É preview; análise real de buffer fica para fase futura.
+- `src/components/timeline/Transport.tsx` (novo) — 4 botões compactos (18px) Rewind/Play-Pause/Forward/Stop. Play ativo é o **único** acento amarelo do grupo (`bg-elevated` + ícone accent). `data-testid="transport-play"` preservado.
+- `src/components/timeline/SceneList.tsx` — substitui o botão único play/pause do gutter pelo `<Transport>` + leitura de duração total. Handlers `rewind`/`forward` **saltam para a borda de cena/pausa** anterior/seguinte (snap no corte, via bordas cumulativas), `stop` zera o playhead. Efeito de teclado global J/K/L/Espaço/. com guarda contra INPUT/TEXTAREA/contentEditable e contra Espaço em `role=button` (não sequestra click de botão nem o drag por teclado do dnd-kit). Removido o seletor `currentTime` redundante (o chip do playhead já o mostra).
+- `src/components/timeline/AudioTrackArea.tsx` — `AudioBlock` agora renderiza o `<Waveform>` ao fundo (densidade ∝ largura do clipe; VO em opacidade 0.5, BGM 0.28 como textura), com label + controles (NR/remover) em camada `z-10` por cima e a barra de volume em `z-20`.
+- `src/components/timeline/TimelineConstants.ts` — `TYPE_TAG_FILL`/`TYPE_BLOCK_FILL` por tipo (image=accent só num chip minúsculo; video/gif=bordô; text=cream) — disciplina de acento.
+
+### Verificação (Playwright headless, valores reais)
+Smoke test no editor real (criar projeto → 2 cenas → setar arquivo de áudio): **7/7 PASS, 0 erros de console**.
+- Transporte renderiza exatamente **4 botões**; **K alterna** "Reproduzir"→"Pausar"; J/L/. executam sem erro.
+- Waveform renderizou **80 barras** no clipe VO de 10s.
+- TransitionBadge **CUT** aparece entre Cena 1 e Cena 2; cena ativa com barra accent à esquerda.
+- `tsc` sem erros novos (só os 3 pré-existentes de `frameExporter.ts`); `next build` compila e gera as 3 páginas estáticas.
+
+### TestSprite (dev mode, 15 high-priority)
+**8/15 PASS · 5 fail · 2 blocked — 0 regressões reais.** Passes incluem os TCs F5 exercitáveis pelo harness: **TC007** (add scene) e **TC013** (toggle de transição). As falhas TC009/TC010 (reorder dnd-kit) são **artefato de automação** — o pointer sintético não satisfaz o `activationConstraint: distance 6px` do dnd-kit; **reorder confirmado funcional via Playwright com pointer real** (`[Cena 1,2,3]`→`[Cena 2,3,1]`, 0 pageerrors). As demais (TC002/003/004/008/011) são ambientais (o sandbox do TestSprite não acessa arquivos locais → não importa asset/cria elemento). Relatório completo em `testsprite_tests/testsprite-mcp-test-report.md`.
+
+### Pendente p/ fechar a fase
+- Aprovação visual do Boss (auditoria de acento: playhead vs. borda de cena ativa, ambos amarelos em contextos distintos — confirmar que não competem).
+
+### Aprendizados
+- **Espaço como play/pause divide o teclado com o dnd-kit:** o KeyboardSensor ativa o drag em `role=button` com Espaço. A guarda precisa pular Espaço quando o foco está em botão/handle (`t.tagName==='BUTTON' || t.closest('[role="button"]')`), senão um único Espaço dispara play **e** pega/solta a cena. `K` fica como atalho sempre-ativo, sem essa restrição.
+- **Waveform determinístico por hash do id** mantém a forma estável entre re-renders/reloads (nada de `Math.random`, que mudaria a cada frame) e dá a cada clipe uma assinatura própria — barato e suficiente para preview.
+
 ## v0.9.2 (2026-06-15) — F4b: Properties contextual com binding ao vivo (Claude Code)
 
 ### Contexto

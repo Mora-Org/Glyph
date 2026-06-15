@@ -3,6 +3,7 @@
 import React, { useRef, useCallback } from 'react';
 import { useProjectStore } from '@/store/projectStore';
 import type { Scene, SceneElement } from '@/store/projectStore';
+import { TYPE_TAG_FILL, TYPE_BLOCK_FILL } from './TimelineConstants';
 
 interface ElementTimelineProps {
   scene: Scene;
@@ -17,13 +18,6 @@ const typeLabel: Record<SceneElement['type'], string> = {
   video: 'VID',
   gif:   'GIF',
   text:  'TXT',
-};
-
-const typeColor: Record<SceneElement['type'], string> = {
-  image: 'bg-cyan-500/70',
-  video: 'bg-pink-500/70',
-  gif:   'bg-yellow-400/70',
-  text:  'bg-white/60',
 };
 
 export default function ElementTimeline({ scene }: ElementTimelineProps) {
@@ -120,10 +114,10 @@ export default function ElementTimeline({ scene }: ElementTimelineProps) {
   if (scene.elements.length === 0) return null;
 
   return (
-    <div className="flex flex-col border-t border-white/8 bg-[#0d0d0d]" style={{ maxHeight: 160 }}>
+    <div className="flex flex-col border-t border-border bg-bg-deep" style={{ maxHeight: 160 }}>
       {/* Header da timeline */}
-      <div className="flex items-center px-3 py-1 border-b border-white/5">
-        <span className="text-[10px] font-mono text-white/30 uppercase tracking-wider">
+      <div className="flex items-center px-3 py-1 border-b border-border">
+        <span className="text-[9.5px] font-mono text-text-secondary uppercase tracking-[0.10em]">
           Timeline — {scene.name} ({scene.duration}s)
         </span>
       </div>
@@ -131,15 +125,15 @@ export default function ElementTimeline({ scene }: ElementTimelineProps) {
       {/* Régua de tempo */}
       <div className="flex overflow-y-auto">
         <div style={{ width: LABEL_W, flexShrink: 0 }} />
-        <div className="flex-1 relative h-4 border-b border-white/5">
+        <div className="flex-1 relative h-4 border-b border-border">
           {Array.from({ length: Math.floor(scene.duration) + 1 }, (_, i) => (
             <div
               key={i}
               className="absolute top-0 flex flex-col items-center"
               style={{ left: `${(i / scene.duration) * 100}%` }}
             >
-              <div className="w-px h-2 bg-white/15" />
-              <span className="text-[8px] font-mono text-white/25">{i}s</span>
+              <div className="w-px h-2 bg-border" />
+              <span className="text-[8px] font-mono text-text-muted tabular-nums">{i}s</span>
             </div>
           ))}
         </div>
@@ -155,26 +149,29 @@ export default function ElementTimeline({ scene }: ElementTimelineProps) {
           return (
             <div
               key={el.id}
-              className="flex items-center border-b border-white/5"
+              className="flex items-center border-b border-border"
               style={{ height: TRACK_H }}
             >
               {/* Label do elemento */}
               <div
-                className="flex items-center gap-1.5 px-2 flex-shrink-0 border-r border-white/5"
+                className="flex items-center gap-1.5 px-2 flex-shrink-0 border-r border-border"
                 style={{ width: LABEL_W }}
               >
-                <span className={`text-[8px] font-mono font-bold px-1 py-0.5 rounded ${typeColor[el.type]} text-black`}>
+                <span
+                  className="text-[7.5px] font-mono font-bold tracking-[0.04em] px-1 py-0.5 rounded-[2px]"
+                  style={{ background: TYPE_TAG_FILL[el.type], color: '#1A1F33' }}
+                >
                   {typeLabel[el.type]}
                 </span>
-                <span className="text-[9px] font-mono text-white/30 truncate">{name}</span>
+                <span className="text-[9px] font-mono text-text-secondary truncate">{name}</span>
               </div>
 
               {/* Track area */}
               <div className="flex-1 relative h-full">
                 {/* Bloco do elemento */}
                 <div
-                  className={`absolute top-1 bottom-1 rounded ${typeColor[el.type]} opacity-80 flex items-center`}
-                  style={{ left: `${leftPct}%`, width: `${widthPct}%` }}
+                  className="absolute top-1 bottom-1 rounded-[2px] flex items-center"
+                  style={{ left: `${leftPct}%`, width: `${widthPct}%`, background: TYPE_BLOCK_FILL[el.type] }}
                 >
                   {/* Handle esquerdo (startTime) */}
                   <div
@@ -187,10 +184,10 @@ export default function ElementTimeline({ scene }: ElementTimelineProps) {
                     data-testid={`handle-start-${el.id}`}
                     onMouseDown={(e) => { (e.currentTarget as HTMLElement).focus(); dragStart(el, e); }}
                     onKeyDown={(e) => keyStart(el, e)}
-                    className="absolute left-0 top-0 bottom-0 w-3 cursor-ew-resize flex items-center justify-center rounded-l focus:outline-none focus:ring-1 focus:ring-white/40"
+                    className="absolute left-0 top-0 bottom-0 w-3 cursor-ew-resize flex items-center justify-center rounded-l focus:outline-none focus:ring-1 focus:ring-accent"
                     title="Arrastar para ajustar início"
                   >
-                    <div className="w-0.5 h-3 bg-black/40 rounded" />
+                    <div className="w-0.5 h-3 bg-bg-deep/70 rounded" />
                   </div>
 
                   {/* Handle direito (endTime) */}
@@ -204,10 +201,10 @@ export default function ElementTimeline({ scene }: ElementTimelineProps) {
                     data-testid={`handle-end-${el.id}`}
                     onMouseDown={(e) => { (e.currentTarget as HTMLElement).focus(); dragEnd(el, e); }}
                     onKeyDown={(e) => keyEnd(el, e)}
-                    className="absolute right-0 top-0 bottom-0 w-3 cursor-ew-resize flex items-center justify-center rounded-r focus:outline-none focus:ring-1 focus:ring-white/40"
+                    className="absolute right-0 top-0 bottom-0 w-3 cursor-ew-resize flex items-center justify-center rounded-r focus:outline-none focus:ring-1 focus:ring-accent"
                     title="Arrastar para ajustar fim"
                   >
-                    <div className="w-0.5 h-3 bg-black/40 rounded" />
+                    <div className="w-0.5 h-3 bg-bg-deep/70 rounded" />
                   </div>
                 </div>
               </div>
