@@ -91,7 +91,7 @@ export default function ExportModal({ projectName, onClose }: ExportModalProps) 
       // 3. Renderiza frames no canvas offscreen
       setStatusMsg('Renderizando frames...');
       const scenes = project.timeline.filter((i): i is Scene => 'elements' in i);
-      const exportResult = await exportProjectFrames(scenes, (ratio) => {
+      const exportResult = await exportProjectFrames(scenes, project.audioTracks, (ratio) => {
         setProgress(Math.round(ratio * 50)); // primeiros 50% = renderização
         setStatusMsg(`Renderizando frames... ${Math.round(ratio * 100)}%`);
       });

@@ -5,7 +5,7 @@
  * sobrepõe como inputs separados via filter_complex.
  */
 
-import type { Scene, SceneElement } from '@/store/projectStore';
+import type { Scene, SceneElement, AudioTrack } from '@/store/projectStore';
 
 export const EXPORT_FPS    = 30;
 export const EXPORT_WIDTH  = 1280;
@@ -34,6 +34,7 @@ export interface SceneExportResult {
 /** Resultado completo do projeto. */
 export interface ProjectExportResult {
   scenes:        SceneExportResult[];
+  audioTracks:   AudioTrack[];
   totalFrames:   number;
   totalDuration: number;
 }
@@ -45,6 +46,7 @@ export interface ProjectExportResult {
  */
 export async function exportProjectFrames(
   scenes: Scene[],
+  audioTracks: AudioTrack[],
   onProgress?: (ratio: number) => void
 ): Promise<ProjectExportResult> {
   const { Canvas: FabricCanvas, FabricImage, IText } = await import('fabric');
@@ -123,6 +125,7 @@ export async function exportProjectFrames(
 
   return {
     scenes:        results,
+    audioTracks,
     totalFrames,
     totalDuration: scenes.reduce((acc, s) => acc + s.duration, 0),
   };
