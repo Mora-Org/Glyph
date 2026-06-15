@@ -388,6 +388,22 @@ export const useProjectStore = create<ProjectStore>()(
       name: 'peg-project',
       // Só o projeto é serializado; estado de UI (tool/seleção/ruler) é efêmero.
       partialize: (s) => ({ project: s.project }),
+      // Backfill de campos ausentes em projetos persistidos por versões antigas do schema
+      // (ex.: audioTracks não existia). Sem isso, `[...project.audioTracks]` nas ações e o
+      // seletor de trilhas quebram quando o campo vem undefined do localStorage.
+      merge: (persisted, current) => {
+        const p = persisted as { project?: Project | null } | undefined;
+        if (!p?.project) return { ...current, ...(p ?? {}) };
+        return {
+          ...current,
+          project: {
+            ...p.project,
+            timeline:    p.project.timeline ?? [],
+            audioTracks: p.project.audioTracks ?? [],
+            currentTime: p.project.currentTime ?? 0,
+          },
+        };
+      },
     }
   )
 );

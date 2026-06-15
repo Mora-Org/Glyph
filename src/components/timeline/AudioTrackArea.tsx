@@ -2,13 +2,18 @@
 
 import React from 'react';
 import { useProjectStore } from '@/store/projectStore';
-import type { AudioElement } from '@/store/projectStore';
+import type { AudioElement, AudioTrack } from '@/store/projectStore';
 import { PIXELS_PER_SECOND, TRACK_HEIGHT } from './TimelineConstants';
 import { Mic, Music, Trash2, Volume2, Plus } from 'lucide-react';
 import Waveform from './Waveform';
 
 const AUDIO_EXTS  = '.mp3,.wav,.ogg,.m4a,.aac,.flac';
 const LANE_HEIGHT = TRACK_HEIGHT * 2;
+
+// Referência estável p/ o fallback do seletor: projetos antigos (persistidos antes do
+// campo audioTracks existir) trazem audioTracks=undefined. Retornar `[]` literal a cada
+// chamada faz o getSnapshot do useSyncExternalStore parecer mudar sempre → loop infinito.
+const EMPTY_TRACKS: AudioTrack[] = [];
 
 // ── AudioBlock ────────────────────────────────────────────────────────────────
 
@@ -78,7 +83,7 @@ function AudioBlock({ element, trackType, onRemove, onToggleNR }: {
  * fora do eixo de tempo. Cada linha tem altura LANE_HEIGHT, casando com AudioTrackLanes.
  */
 export function AudioTrackLabels() {
-  const tracks           = useProjectStore((s) => s.project?.audioTracks ?? []);
+  const tracks           = useProjectStore((s) => s.project?.audioTracks ?? EMPTY_TRACKS);
   const addAudioTrack    = useProjectStore((s) => s.addAudioTrack);
   const removeAudioTrack = useProjectStore((s) => s.removeAudioTrack);
   const addAudioElement  = useProjectStore((s) => s.addAudioElement);
@@ -171,7 +176,7 @@ export function AudioTrackLabels() {
  * startTime × escala — alinhado em x=0 = t=0 com cenas, régua e playhead.
  */
 export function AudioTrackLanes() {
-  const tracks             = useProjectStore((s) => s.project?.audioTracks ?? []);
+  const tracks             = useProjectStore((s) => s.project?.audioTracks ?? EMPTY_TRACKS);
   const updateAudioElement = useProjectStore((s) => s.updateAudioElement);
   const removeAudioElement = useProjectStore((s) => s.removeAudioElement);
 
