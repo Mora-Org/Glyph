@@ -3,88 +3,78 @@
 ---
 
 ## 1️⃣ Document Metadata
-- **Project Name:** PEG (Glyph by Mora)
-- **Date:** 2026-06-02
-- **Prepared by:** TestSprite AI Team
-- **Scope:** Suíte de regressão frontend (codebase) após a Fase 7 v2b — Integração Playhead & Ruler / Áudio
-- **Server mode:** development (`next dev`, limite de 15 testes prioritários)
-- **Result:** 10/15 aprovados (66,67%). Nenhuma falha é regressão da Fase 7 v2b.
+- **Project Name:** PEG (Glyph)
+- **Date:** 2026-06-15
+- **Phase under test:** F5 — Timeline + SceneList (Glyph DS redesign), v0.9.3
+- **Server mode:** development (dev server cap: 15 high-priority tests)
+- **Prepared by:** TestSprite AI Team + Claude Code (análise)
 
 ---
 
 ## 2️⃣ Requirement Validation Summary
 
-### Requirement R1 — Ciclo de vida do projeto (Dashboard)
-- **TC001** Criar projeto e entrar no Editor — ✅ **Passed**
-  - *Findings:* Fluxo Dashboard → Editor OK. Confirma que a timeline reestruturada (gutter fixo + coluna de tempo) renderiza sem erros ao abrir o Editor.
-- **TC005** Impedir criação de projeto sem nome — ✅ **Passed**
-  - *Findings:* Validação de nome obrigatório e estado de erro do input funcionando.
+### Requirement: Criação de Projeto & Dashboard
+- **TC001 — Create a new project from the dashboard** — ✅ **Passed**
+  - Fluxo Dashboard → Editor funcionando; projeto criado e editor carregado.
 
-### Requirement R2 — Canvas & mídia
-- **TC002** Adicionar mídia por drag-and-drop do SO ao canvas — ❌ **Failed (BLOQUEADO POR AMBIENTE)**
-  - *Findings:* Não é bug da aplicação. O input de arquivo (shadow DOM, aceita `.png,.jpg,.jpeg,.webp,.gif`) está presente e o canvas mostra o drophint, mas o runtime do TestSprite não forneceu nenhum caminho de arquivo (`available_file_paths` vazio; referência a `/tmp/sample-image.png` inexistente). Sem arquivo, o upload não pôde ser simulado.
-- **TC006** Importar pasta de assets e arrastar asset da sidebar — ❌ **Blocked (AMBIENTE)**
-  - *Findings:* Mesma limitação — input de pasta presente, mas sem arquivo de amostra disponível no runtime.
+### Requirement: Cenas & Timeline (F5 — foco desta fase)
+- **TC007 — Add a new scene and switch to it** — ✅ **Passed**
+  - `+ Cena` adiciona cena e ativa; canvas/Properties refletem a cena ativa. Critério de aceite F5 OK.
+- **TC013 — Toggle the transition between two scenes** — ✅ **Passed**
+  - Badge CUT/FADE entre cenas alterna ao clique. Critério de aceite F5 OK.
+- **TC009 — Add and reorder scenes with pauses and transitions** — ❌ **Failed (artefato de automação, NÃO regressão)**
+  - A automação não conseguiu disparar o drag-and-drop do dnd-kit (PointerSensor exige movimento ≥6px — `activationConstraint: { distance: 6 }` — que o pointer sintético do harness não satisfaz). Pausa `PRETO` e badges `FADE`/`CUT` presentes e corretos.
+  - **Verificado manualmente (Playwright, pointer real):** reorder funciona — `[Cena 1, Cena 2, Cena 3]` → `[Cena 2, Cena 3, Cena 1]`, 0 pageerrors.
+- **TC010 — Reorder scenes in the timeline** — ❌ **Failed (mesmo artefato de automação)**
+  - Idem TC009. Reorder confirmado funcional fora do harness.
 
-### Requirement R3 — Cenas & timeline
-- **TC003** Adicionar e ativar cenas com canvas refletindo a cena ativa — ✅ **Passed**
-  - *Findings:* Sincronia cena ↔ timeline OK (relevante para a Fase 7: o sync por `getItemAtTime` continua correto).
-- **TC011** Alternar tipo de transição entre cenas (CUT/FADE) — ✅ **Passed**
-  - *Findings:* Confirma que os `TransitionBadge` — agora renderizados com largura 0 e posição absoluta sobre a junção — permanecem clicáveis e funcionais após a reestruturação do layout.
-- **TC007** Reordenar cenas na lista — ❌ **Failed (LIMITAÇÃO DE AUTOMAÇÃO)**
-  - *Findings:* Reorder via `@dnd-kit` (PointerSensor, threshold 6px) exige gesto de *drag* real (pointer down → move → up). A automação tentou apenas cliques, que não disparam o sortable. A lógica de reorder (`DndContext`/`reorderTimeline`) não foi modificada nesta fase. Requer verificação com drag de ponteiro real.
-- **TC004** Manter elementos estáveis ao trocar de cena e voltar — ❌ **Failed (CASO DE TESTE INVÁLIDO)**
-  - *Findings:* O caso de teste está corrompido/alucinado: tentou navegar para `http://localhost/Taktimize/` e `/pricing` (`ERR_EMPTY_RESPONSE`), URLs que **não pertencem ao Glyph**. O resultado não reflete o aplicativo. Recomenda-se remover/regenerar este caso.
+### Requirement: Lettering & Tipografia
+- **TC005 — Split text into individual character elements** — ✅ **Passed**
+- **TC006 — Create lettering and split it into character elements** — ✅ **Passed**
+- **TC012 — Open lettering panel and add a text element** — ✅ **Passed**
+- **TC014 — Configure text typography and animation** — ✅ **Passed**
+- **TC015 — Prevent adding text without an active scene** — ✅ **Passed**
 
-### Requirement R4 — Pausas ativas
-- **TC008** Adicionar pausa VHS e prever animação no canvas — ✅ **Passed**
-- **TC010** Inserir pausa de tela preta e prever no canvas — ✅ **Passed**
-- **TC014** Adicionar pausa de cor sólida e prever no canvas — ✅ **Passed**
-  - *Findings:* As três pausas aparecem na timeline e renderizam o preview. Confirma que pausas continuam visíveis na faixa de cenas após a reestruturação.
+### Requirement: Canvas — manipulação de assets/elementos
+- **TC002 — Drag an imported asset onto the canvas** — ⛔ **Blocked (ambiental)**
+  - O sandbox do TestSprite não disponibiliza caminhos de arquivo local (`available_file_paths`), então nenhum asset pôde ser importado. Não testa código F5.
+- **TC003 — Move and resize a canvas element while keeping state in sync** — ❌ **Failed (ambiental, dependente de TC002)**
+  - Sem asset importado não há elemento selecionável; verificação de mover/redimensionar não pôde rodar. Não toca código F5.
+- **TC011 — Edit the visibility window of a scene element in the timeline** — ⛔ **Blocked (ambiental)**
+  - Não foi possível criar elemento de texto via automação (placeholder permaneceu). Sem elemento, os handles do ElementTimeline não puderam ser exercitados. (ElementTimeline não teve mudança de comportamento na F5.)
 
-### Requirement R5 — Timeline de elementos
-- **TC009** ElementTimeline aparece quando a cena ativa tem elementos — ✅ **Passed**
-- **TC012** Ajustar start/end de elemento via handles sem inversão — ❌ **Failed (LIMITAÇÃO DE AUTOMAÇÃO)**
-  - *Findings:* Os handles do `ElementTimeline` usam drag de mouse (`onMouseDown`), não teclas de seta; a automação tentou ajustar via teclado e os valores não mudaram. Componente **não modificado** na Fase 7 v2b. Requer simulação de drag real.
+### Requirement: Timeline — janela de visibilidade de elemento
+- **TC004 — Edit an element visibility window from the timeline** — ❌ **Failed (ambiental, dependente de elemento)**
+  - Sem elemento na cena (mesma raiz do TC011), o passo de arrastar handle não teve alvo.
 
-### Requirement R6 — Tipografia / Lettering
-- **TC013** Split de texto em caracteres cria múltiplos elementos no canvas — ✅ **Passed**
-- **TC015** Configurar fonte, tamanho, cor e efeito antes do split mantém o split — ✅ **Passed**
-
-### Requirement R7 — Áudio & Sync (Fase 7 v2b) — *NÃO COBERTO PELA SUÍTE LEGADA*
-- *Status:* O test plan executado é a suíte legada (TC001–TC015), focada em canvas/cenas/pausas/lettering. **Os novos recursos da v2b — trilhas VO/BGM, transporte play/pause, playhead, régua global e alinhamento do eixo de tempo — não possuem casos no plano atual.**
-- *Mitigação:* Validados por verificação visual independente (Playwright headless 1440×900): criação de projeto → 3 cenas → trilhas VO/BGM → upload de áudio → play, com playhead avançando 0.0 → 1.7s, alinhamento régua/cenas/áudio confirmado e 0 erros de console.
-- *Ação recomendada:* Regenerar o frontend test plan para incluir casos de áudio/transporte antes de fechar a fase oficialmente.
+### Requirement: Importação de assets
+- **TC008 — Import a local asset folder into the sidebar** — ❌ **Failed (ambiental)**
+  - Seleção de pasta/arquivo bloqueada pela ausência de `available_file_paths` no harness. UI de importação presente e correta.
 
 ---
 
 ## 3️⃣ Coverage & Matching Metrics
 
-- **66,67%** dos testes passaram (10/15).
-- **0** falhas atribuíveis a regressão da Fase 7 v2b.
-- Falhas por categoria: 2 bloqueadas por ambiente (sem arquivo), 1 caso inválido, 2 limitações de automação (drag/teclado).
+- **53.33%** dos testes passaram no harness (8/15).
+- **0 regressões reais** atribuíveis à F5: os 8 passes incluem os testes F5 que o harness consegue exercitar (TC007, TC013); as 2 falhas F5 (TC009/TC010 reorder) foram confirmadas como artefatos de automação via verificação manual com pointer real; as 5 falhas/bloqueios restantes são limitações do ambiente (sem acesso a arquivos locais).
 
-| Requirement | Total | ✅ Passed | ❌ Failed | Observação |
-|---|---|---|---|---|
-| R1 — Ciclo de vida do projeto | 2 | 2 | 0 | — |
-| R2 — Canvas & mídia | 2 | 0 | 2 | Ambos bloqueados por ambiente (upload sem arquivo) |
-| R3 — Cenas & timeline | 4 | 2 | 2 | TC007 (drag), TC004 (caso inválido) |
-| R4 — Pausas ativas | 3 | 3 | 0 | — |
-| R5 — Timeline de elementos | 2 | 1 | 1 | TC012 (drag via teclado) |
-| R6 — Tipografia / Lettering | 2 | 2 | 0 | — |
-| R7 — Áudio & Sync (v2b) | 0 | 0 | 0 | Sem cobertura na suíte legada |
-| **Total** | **15** | **10** | **5** | |
+| Requirement                                   | Total | ✅ Passed | ❌ Failed | ⛔ Blocked |
+|-----------------------------------------------|-------|-----------|-----------|------------|
+| Criação de Projeto & Dashboard                | 1     | 1         | 0         | 0          |
+| Cenas & Timeline (F5)                          | 4     | 2         | 2*        | 0          |
+| Lettering & Tipografia                         | 5     | 5         | 0         | 0          |
+| Canvas — manipulação de assets/elementos       | 3     | 0         | 1†        | 2†         |
+| Timeline — janela de visibilidade de elemento  | 1     | 0         | 1†        | 0          |
+| Importação de assets                           | 1     | 0         | 1†        | 0          |
+| **Total**                                     | **15**| **8**     | **5**     | **2**      |
+
+\* TC009/TC010 — reorder dnd-kit: artefato de automação, **confirmado funcional manualmente**.
+† Falhas/bloqueios ambientais: o sandbox do TestSprite não acessa arquivos locais, impedindo importar assets e, por consequência, criar/selecionar elementos no canvas.
 
 ---
 
 ## 4️⃣ Key Gaps / Risks
 
-1. **Cobertura de áudio (Fase 7 v2b) ausente.** A suíte legada não exercita VO/BGM, transporte play/pause, playhead nem alinhamento do eixo de tempo. Mitigado por verificação visual via Playwright; recomenda-se regenerar o test plan com casos de áudio/transporte (incluindo `data-testid="transport-play"`, `add-audio-vo`, `add-audio-bgm`).
-2. **Testes dependentes de upload (TC002, TC006) não executáveis** sem arquivos de amostra no runtime. Fornecer caminhos em `available_file_paths` (ex.: uma imagem `.png`) para destravar.
-3. **Interações de drag não automatizáveis por clique/teclado (TC007, TC012).** O `@dnd-kit` e os handles de trimming exigem simulação de gesto de ponteiro real. Sem isso, esses casos produzem falso-negativo.
-4. **Caso de teste inválido (TC004).** Referencia um aplicativo não relacionado (`Taktimize`/`pricing`); deve ser removido ou regenerado.
-5. **Conclusão para a Fase 7 v2b:** Nenhuma regressão detectada. Os recursos que minha mudança poderia ter quebrado — entrada no Editor, cenas, transições (badges), pausas e timeline de elementos — passaram. As falhas são ambientais, de automação ou de caso inválido.
-
----
-
-> Dashboard de resultados (por teste): ver links em `testsprite_tests/tmp/raw_report.md`.
+- **Cobertura de drag-and-drop não-automatizável no harness:** o `activationConstraint: { distance: 6 }` do dnd-kit não é satisfeito pelo pointer sintético do TestSprite, gerando falsos negativos recorrentes em reorder (TC009/TC010). Mitigação atual: verificação manual via Playwright com mouse real (move em passos > 6px). Recomenda-se manter esse smoke de reorder fora do TestSprite.
+- **Testes dependentes de arquivos locais ficam cegos no harness:** TC002/TC003/TC004/TC008/TC011 exigem importar mídia, mas o ambiente não expõe `available_file_paths`. Não há sinal sobre o caminho de assets — risco de regressões nessa área passarem despercebidas no CI até rodar no desktop (Tauri) com arquivos reais.
+- **Sem cobertura automatizada específica de transporte/waveform no harness:** transporte (4 botões), atalhos J/K/L/Espaço/. e waveforms de áudio não têm TC dedicado no plano gerado; foram validados no smoke Playwright desta fase (7/7 PASS). Sugere-se adicionar TCs explícitos (TC_TIM) num próximo plano.

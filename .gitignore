@@ -33,3 +33,5 @@ testsprite_tests/tmp/
 
 # Scripts locais de verificação visual (Playwright)
 _glyph_*.mjs
+
+testsprite_tests\tmp\config.json

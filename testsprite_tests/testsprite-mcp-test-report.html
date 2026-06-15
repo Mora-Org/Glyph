@@ -1209,11 +1209,11 @@ body {
         <div class="metadata-container">
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Project Name</div>
-          <div class="metadata-value text-body">PEG (Glyph by Mora)</div>
+          <div class="metadata-value text-body">PEG (Glyph)</div>
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Date</div>
-          <div class="metadata-value text-body">6/2/2026</div>
+          <div class="metadata-value text-body">6/15/2026</div>
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Prepared by</div>
@@ -1237,17 +1237,11 @@ body {
             <li><span class="coverage-highlight">0/0</span> of tests passed</li>
             <li><span class="coverage-highlight">Key gaps / risks:</span>
             
-              <ol>
-<li><strong>Cobertura de áudio (Fase 7 v2b) ausente.</strong> A suíte legada não exercita VO/BGM, transporte play/pause, playhead nem alinhamento do eixo de tempo. Mitigado por verificação visual via Playwright; recomenda-se regenerar o test plan com casos de áudio/transporte (incluindo <code>data-testid=&quot;transport-play&quot;</code>, <code>add-audio-vo</code>, <code>add-audio-bgm</code>).</li>
-<li><strong>Testes dependentes de upload (TC002, TC006) não executáveis</strong> sem arquivos de amostra no runtime. Fornecer caminhos em <code>available_file_paths</code> (ex.: uma imagem <code>.png</code>) para destravar.</li>
-<li><strong>Interações de drag não automatizáveis por clique/teclado (TC007, TC012).</strong> O <code>@dnd-kit</code> e os handles de trimming exigem simulação de gesto de ponteiro real. Sem isso, esses casos produzem falso-negativo.</li>
-<li><strong>Caso de teste inválido (TC004).</strong> Referencia um aplicativo não relacionado (<code>Taktimize</code>/<code>pricing</code>); deve ser removido ou regenerado.</li>
-<li><strong>Conclusão para a Fase 7 v2b:</strong> Nenhuma regressão detectada. Os recursos que minha mudança poderia ter quebrado — entrada no Editor, cenas, transições (badges), pausas e timeline de elementos — passaram. As falhas são ambientais, de automação ou de caso inválido.</li>
-</ol>
-<hr>
-<blockquote>
-<p>Dashboard de resultados (por teste): ver links em <code>testsprite_tests/tmp/raw_report.md</code>.</p>
-</blockquote>
+              <ul>
+<li><strong>Cobertura de drag-and-drop não-automatizável no harness:</strong> o <code>activationConstraint: { distance: 6 }</code> do dnd-kit não é satisfeito pelo pointer sintético do TestSprite, gerando falsos negativos recorrentes em reorder (TC009/TC010). Mitigação atual: verificação manual via Playwright com mouse real (move em passos &gt; 6px). Recomenda-se manter esse smoke de reorder fora do TestSprite.</li>
+<li><strong>Testes dependentes de arquivos locais ficam cegos no harness:</strong> TC002/TC003/TC004/TC008/TC011 exigem importar mídia, mas o ambiente não expõe <code>available_file_paths</code>. Não há sinal sobre o caminho de assets — risco de regressões nessa área passarem despercebidas no CI até rodar no desktop (Tauri) com arquivos reais.</li>
+<li><strong>Sem cobertura automatizada específica de transporte/waveform no harness:</strong> transporte (4 botões), atalhos J/K/L/Espaço/. e waveforms de áudio não têm TC dedicado no plano gerado; foram validados no smoke Playwright desta fase (7/7 PASS). Sugere-se adicionar TCs explícitos (TC_TIM) num próximo plano.</li>
+</ul>
 
             </li>
 </ul>
@@ -1272,7 +1266,7 @@ body {
           <div class="table-rows">
             
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement R1 — Ciclo de vida do projeto (Dashboard)</span></div>
+              <div class="table-cell"><span class="text-body">Requirement: Criação de Projeto & Dashboard</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1280,7 +1274,7 @@ body {
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement R2 — Canvas & mídia</span></div>
+              <div class="table-cell"><span class="text-body">Requirement: Cenas & Timeline (F5 — foco desta fase)</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1288,7 +1282,7 @@ body {
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement R3 — Cenas & timeline</span></div>
+              <div class="table-cell"><span class="text-body">Requirement: Lettering & Tipografia</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1296,7 +1290,7 @@ body {
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement R4 — Pausas ativas</span></div>
+              <div class="table-cell"><span class="text-body">Requirement: Canvas — manipulação de assets/elementos</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1304,7 +1298,7 @@ body {
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement R5 — Timeline de elementos</span></div>
+              <div class="table-cell"><span class="text-body">Requirement: Timeline — janela de visibilidade de elemento</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1312,15 +1306,7 @@ body {
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement R6 — Tipografia / Lettering</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
-            </div>
-        
-
-            <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement R7 — Áudio & Sync (Fase 7 v2b) — *NÃO COBERTO PELA SUÍTE LEGADA*</span></div>
+              <div class="table-cell"><span class="text-body">Requirement: Importação de assets</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1346,7 +1332,7 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement R1 — Ciclo de vida do projeto (Dashboard)</h3>
+              <h3 class="title-requirement">Requirement: Criação de Projeto & Dashboard</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1375,7 +1361,7 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement R2 — Canvas & mídia</h3>
+              <h3 class="title-requirement">Requirement: Cenas & Timeline (F5 — foco desta fase)</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1404,7 +1390,7 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement R3 — Cenas & timeline</h3>
+              <h3 class="title-requirement">Requirement: Lettering & Tipografia</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1433,7 +1419,7 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement R4 — Pausas ativas</h3>
+              <h3 class="title-requirement">Requirement: Canvas — manipulação de assets/elementos</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1462,7 +1448,7 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement R5 — Timeline de elementos</h3>
+              <h3 class="title-requirement">Requirement: Timeline — janela de visibilidade de elemento</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1491,36 +1477,7 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement R6 — Tipografia / Lettering</h3>
-                <div class="requirement-status-tag status-success">
-              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
-                <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <span>0/0</span>
-            </div>
-              </div>
-              <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
-            </div>
-            <div class="accordion-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11.4276 6C11.9145 6 12.1687 6.61626 11.875 7.01439L11.8316 7.06689L8.40295 10.817C8.30455 10.9246 8.17364 10.9892 8.03476 10.9988C7.89589 11.0083 7.7586 10.9621 7.64865 10.8688L7.59493 10.817L4.16629 7.06689L4.11886 7.00814L4.088 6.96002L4.05714 6.90002L4.04743 6.87752L4.032 6.83564L4.01371 6.76814L4.008 6.73501L4.00229 6.69751L4 6.66189V6.58814L4.00286 6.55188L4.008 6.51438L4.01371 6.48188L4.032 6.41438L4.04743 6.37251L4.08743 6.29L4.12457 6.23375L4.16629 6.18313L4.22 6.13125L4.26401 6.0975L4.31886 6.06375L4.33944 6.05313L4.37772 6.03625L4.43944 6.01625L4.46972 6.01L4.50401 6.00375L4.53658 6.00125L11.4276 6Z" fill="var(--fg-secondary)"/>
-              </svg>
-            </div>
-          </div>
-
-            <div class="accordion-content">
-            <div class="test-wrapper">
-
-            </div>
-          </div>
-        </div>
-
-                <div class="requirement-wrapper accordion-item active">
-          <div class="accordion-header" onclick="toggleAccordion(this)">
-            <div class="requirement-content">
-                                          <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement R7 — Áudio & Sync (Fase 7 v2b) — *NÃO COBERTO PELA SUÍTE LEGADA*</h3>
+              <h3 class="title-requirement">Requirement: Importação de assets</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1561,7 +1518,7 @@ body {
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Code Repo</div>
-          <div class="metadata-value text-body">PEG (Glyph by Mora)</div>
+          <div class="metadata-value text-body">PEG (Glyph)</div>
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Test Results</div>
