@@ -30,3 +30,6 @@ __pycache__/
 
 # TestSprite — outputs temporários
 testsprite_tests/tmp/
+
+# Scripts locais de verificação visual (Playwright)
+_glyph_*.mjs

@@ -1,6 +1,29 @@
 # Patch Notes — PEG
 Histórico de versões e aprendizados.
 
+## v0.9.0 (2026-06-15) — F3: Editor Shell (Topbar + Sidebar) (Claude Code)
+
+### Contexto
+Verificação visual (Playwright) da F1 mostrou o Dashboard OK mas o Editor degradado: `Editor.tsx` **hardcodava** `bg-[#0a0a0a]`/`bg-[#080808]`, ignorando os tokens Indigo da F1 — baixo contraste, topbar inline sem hierarquia. F3 reescreve o shell externo do Editor (mantendo canvas/timeline/properties como caixas-pretas). Plano refinado por workflow de planejamento + revisão adversarial.
+
+### Mudanças
+- `src/components/ui/Topbar.tsx` (novo) — topbar editorial 40px: back (aria-label) · wordmark "Gl**y**ph" (Fraunces, `y` em `--accent`, opsz 28) · divisor hairline · nome do projeto (mono) · toggle Lettering (IconType) · `GlyphButton primary sm` Exportar. Hooks `data-testid` estáveis.
+- `src/components/ui/EditorSidebar.tsx` (novo, ex-`AssetSidebar`) — `aside` 224px `bg-deep` com TabBar de 4 abas. `files`+`activeMediaId` mantidos no nível da sidebar (sobrevivem à troca de aba). Folder picker + drag `application/peg-asset` preservados 1:1.
+- `src/components/ui/sidebar/` (novo) — `TabBar` (aba ativa border-bottom accent), `SearchInput`, `MediaTab` (item ativo = border-left accent), `FontsTab` (Fraunces/Geist/Geist Mono com "Aa" na própria fonte), `EffectsTab` (tremor/neon/ticker), `PausesTab` (black/vhs/static com texturas inline).
+- `src/components/ui/EditorShell.tsx` (novo) — `glyph-root` coluna → Topbar + linha `[Sidebar 224 | main flex-1 min-w-0 overflow-hidden | properties=null]` com `min-h-0`.
+- `src/components/ui/Editor.tsx` — usa `EditorShell`; matte do canvas → `--bg-surface`; `canvasRef`/LetteringPanel/ElementTimeline/SceneList/ExportModal preservados. Removidos todos os `#0a0a0a`/`#080808`/`white/8`/emojis.
+- `src/components/ui/AssetSidebar.tsx` — removido (substituído por EditorSidebar).
+
+### Verificação
+- Playwright: header Indigo `rgb(26,31,51)`, Exportar accent `rgb(232,181,71)`, aba ativa border-bottom accent, Lettering `aria-pressed` + `bg-elevated`, Export modal abre, back→Dashboard. **Zero erros de console.**
+- `tsc --noEmit`: nenhum erro novo (só os 3 pré-existentes do Fabric em `frameExporter.ts`).
+
+### Aprendizados
+- **Janela de não-compilação:** renomear (`git mv`) um componente ainda importado quebra o build entre passos. Solução: criar o substituto como arquivo novo e deletar o antigo só após migrar todos os consumidores.
+- **Estado em abas que desmontam:** `files`/seleção precisam viver no pai (EditorSidebar), não na aba — senão somem ao alternar.
+- **Acento amarelo "1x por tela":** interpretado por região (wordmark-`y` é marca/identidade, isento; ≤1 estado-de-ação por região). Removidos accents gratuitos (ex.: `i===0` estático no EffectsTab). Pendente aprovação visual do Boss.
+- **Contrato Fabric:** `min-w-0 + overflow-hidden` no `<main>`/`<section>` impede o canvas fixo de 1280px estourar o layout.
+
 ## v0.8.1 (2026-06-05) — Reordenação de cenas acessível por teclado (Claude Code)
 
 ### Contexto

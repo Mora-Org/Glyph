@@ -23,7 +23,7 @@ Este arquivo rastreia o progresso macro das fases do projeto **Glyph (v1.4)**.
 - [ ] **Track Redesign Editorial: Glyph DS** (overhaul visual completo, handoff Claude Design 2026-04-30) — ver [`plano_implementacao_2026-04-30_v1_glyph_redesign_master.md`](plano_implementacao_2026-04-30_v1_glyph_redesign_master.md)
     - [x] **F1 — Fundação DS** (tokens, Fraunces/Geist/Geist Mono, primitivas) — *bloqueia tudo* — [plano](plano_implementacao_2026-04-30_v1_redesign_F1_fundacao.md)
     - [ ] **F2 — Dashboard + Novo Projeto** (rail nav, headline editorial, grid de cards, modal com presets) — [plano](plano_implementacao_2026-04-30_v1_redesign_F2_dashboard.md)
-    - [ ] **F3 — Editor Shell** (Topbar + Sidebar 4 tabs) — [plano](plano_implementacao_2026-04-30_v1_redesign_F3_editor_shell.md)
+    - [/] **F3 — Editor Shell** (Topbar + Sidebar 4 tabs) — *implementado + verificado via Playwright (v0.9.0): topbar editorial, sidebar 4 abas, palette Indigo, sem erros de console, tsc sem erros novos. **Habilita F4/F5/F6/F7.** Pendente p/ fechar: TestSprite regenerado (TC006/007/008/020/025 antigos dependiam de `Assets`/xpath do header/"+ Pasta") + aprovação visual do Boss (auditoria de acento).* — [plano](plano_implementacao_2026-04-30_v1_redesign_F3_editor_shell.md)
     - [ ] **F4 — Canvas + Properties** (chrome, tool strip, ruler, Properties panel contextual) — [plano](plano_implementacao_2026-04-30_v1_redesign_F4_canvas_props.md)
     - [ ] **F5 — Timeline + SceneList** (ruler, transport J/K/L, waveforms, scene cards, transition badges) — [plano](plano_implementacao_2026-04-30_v1_redesign_F5_timeline_scenelist.md)
     - [ ] **F6 — Lettering Studio** (modal per-glyph com efeitos) — [plano](plano_implementacao_2026-04-30_v1_redesign_F6_lettering_studio.md)
