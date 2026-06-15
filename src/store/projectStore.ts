@@ -85,8 +85,18 @@ export interface Project {
 
 // ---------- Store ----------
 
+export type EditorTool = 'V' | 'T' | 'H'; // V=selecionar · T=texto · H=mão/pan
+
 interface ProjectStore {
   project: Project | null;
+
+  // UI do Editor (efêmero — não persiste)
+  selectedElementId: string | null;
+  tool: EditorTool;
+  showRuler: boolean;
+  selectElement: (id: string | null) => void;
+  setTool: (tool: EditorTool) => void;
+  toggleRuler: () => void;
 
   // Projeto
   createProject: (name: string) => void;
@@ -138,6 +148,14 @@ export const useProjectStore = create<ProjectStore>()(
   persist(
     (set) => ({
       project: null,
+
+      // UI do Editor (efêmero)
+      selectedElementId: null,
+      tool: 'V',
+      showRuler: true,
+      selectElement: (id) => set({ selectedElementId: id }),
+      setTool: (tool) => set({ tool }),
+      toggleRuler: () => set((s) => ({ showRuler: !s.showRuler })),
 
       createProject: (name) =>
         set(() => {
@@ -368,6 +386,8 @@ export const useProjectStore = create<ProjectStore>()(
     }),
     {
       name: 'peg-project',
+      // Só o projeto é serializado; estado de UI (tool/seleção/ruler) é efêmero.
+      partialize: (s) => ({ project: s.project }),
     }
   )
 );

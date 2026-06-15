@@ -1,6 +1,28 @@
 # Patch Notes — PEG
 Histórico de versões e aprendizados.
 
+## v0.9.1 (2026-06-15) — F4a: Canvas Chrome + fundação Properties (Claude Code)
+
+### Contexto
+F4 (Canvas + Properties) foi **dividida** por recomendação de revisão adversarial: F4a = chrome do canvas (zero risco no motor Fabric); F4b = painel Properties com binding ao vivo (a parte perigosa — thrash de persist, cast IText, dedup com LetteringPanel, fronteira de commit nas primitivas). Esta entrega é a F4a.
+
+### Mudanças
+- `src/store/projectStore.ts` — slice `editor` efêmero: `tool: 'V'|'T'|'H'`, `selectedElementId`, `showRuler` + `selectElement/setTool/toggleRuler`. **`partialize: (s) => ({ project })`** para não persistir UI no localStorage.
+- `src/hooks/useFabricCanvas.ts` — eventos `selection:created/updated/cleared` → `selectElement(pegId)`. One-way (obj.set programático não re-emite); `dispose()` limpa.
+- `src/components/canvas/ToolStrip.tsx` (novo) — V/T/H com keycaps, keybind global com guard de INPUT/TEXTAREA/contentEditable (não sequestra digitação do IText). Tool ativa = accent.
+- `src/components/canvas/CanvasStatusBar.tsx` (novo) — `NN/NN · Cena · 1280×720 · Ns · X·Y do selecionado · Snap` (mono tabular, backdrop blur, badge Snap subdued).
+- `src/components/canvas/CanvasRuler.tsx` (novo) — réguas top+left gated por `showRuler`.
+- `src/components/canvas/MainCanvas.tsx` — `.glyph-paper` na artboard; EmptyCanvas reescrito "Cena em branco." (Fraunces 800 italic, opsz 36) + submono.
+- `src/app/globals.css` — token `--bg-void: #15192A` + bridge.
+- `src/components/ui/Editor.tsx` — canvas com fundo `--bg-void` + chrome (ToolStrip/StatusBar/Ruler) ao redor; índice/total das cenas computados.
+
+### Verificação
+- Playwright: StatusBar "01/01 · Cena 1 · 1280×720 · 5s"; tool V ativo accent; clique T e **tecla H** alternam (keybind com guard); EmptyCanvas "Cena em branco". **Zero erros de console.** `tsc` sem erros novos.
+
+### Aprendizados
+- **Persist síncrono é armadilha:** sem `partialize`, cada `set` de UI grava o projeto inteiro no localStorage. Restringir a serialização a `{ project }` evita thrash e mantém a chave `peg-project`.
+- **F4b (deferido) exige preparo:** primitivas `Slider`/`NumField` precisam de `onCommit` (pointerup) antes do binding ao vivo, senão `updateElement` por `onChange` serializa ~120x/2s. `applyPatch` precisa cast p/ IText (`obj.set({fontSize})` não existe na base). `Swatch` não é color picker (usar `<input type=color>`). LetteringPanel já edita os mesmos campos → decidir fonte única de verdade.
+
 ## v0.9.0 (2026-06-15) — F3: Editor Shell (Topbar + Sidebar) (Claude Code)
 
 ### Contexto

@@ -80,18 +80,41 @@ const MainCanvas = forwardRef<MainCanvasHandle, MainCanvasProps>(function MainCa
 
   return (
     <div
-      className="relative flex items-center justify-center bg-black/60"
-      style={{ width: CANVAS_W, height: CANVAS_H }}
+      className="glyph-paper relative flex items-center justify-center"
+      style={{ width: CANVAS_W, height: CANVAS_H, background: 'rgba(0,0,0,0.6)' }}
       onDrop={handleDrop}
       onDragOver={(e) => e.preventDefault()}
     >
       <canvas ref={canvasRef} />
 
       {scene.elements.length === 0 && (
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 border border-dashed border-white/10 rounded">
-          <span className="text-4xl opacity-20">+</span>
-          <p className="text-xs font-mono text-white/30">
-            Arraste imagens, vídeos ou GIFs para começar
+        <div
+          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 rounded"
+          style={{ border: '1px dashed var(--border)' }}
+        >
+          <span
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontWeight: 800,
+              fontSize: 36,
+              color: 'var(--text-secondary)',
+              opacity: 0.55,
+              fontVariationSettings: "'opsz' 36, 'SOFT' 50, 'WONK' 1",
+            }}
+          >
+            Cena em branco.
+          </span>
+          <p
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              textTransform: 'uppercase',
+              letterSpacing: 'var(--tracking-mono)',
+              color: 'var(--text-muted)',
+            }}
+          >
+            Arraste um asset · ou pressione T para escrever
           </p>
         </div>
       )}

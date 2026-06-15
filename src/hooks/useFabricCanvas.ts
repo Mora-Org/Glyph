@@ -18,6 +18,7 @@ export function useFabricCanvas({ sceneId, width, height }: UseFabricCanvasOptio
   const canvasRef     = useRef<HTMLCanvasElement>(null);
   const fabricRef     = useRef<FabricCanvas | null>(null);
   const updateElement = useProjectStore((s) => s.updateElement);
+  const selectElement = useProjectStore((s) => s.selectElement);
 
   useEffect(() => {
     if (!canvasRef.current || fabricRef.current) return;
@@ -55,6 +56,13 @@ export function useFabricCanvas({ sceneId, width, height }: UseFabricCanvasOptio
           },
         });
       });
+
+      // Seleção → store (one-way; obj.set programático não re-emite estes eventos)
+      const readPegId = (o: unknown): string | null =>
+        (o as (FabricObject & { pegId?: string }) | undefined)?.pegId ?? null;
+      canvas.on('selection:created', (e) => selectElement(readPegId(e.selected?.[0])));
+      canvas.on('selection:updated', (e) => selectElement(readPegId(e.selected?.[0])));
+      canvas.on('selection:cleared', () => selectElement(null));
 
       fabricRef.current = canvas;
     });

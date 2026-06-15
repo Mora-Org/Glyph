@@ -5,6 +5,9 @@ import { useProjectStore } from '@/store/projectStore';
 import type { Scene, ActivePause } from '@/store/projectStore';
 import MainCanvas, { type MainCanvasHandle } from '@/components/canvas/MainCanvas';
 import ActivePauseCanvas from '@/components/canvas/ActivePauseCanvas';
+import ToolStrip from '@/components/canvas/ToolStrip';
+import CanvasStatusBar from '@/components/canvas/CanvasStatusBar';
+import CanvasRuler from '@/components/canvas/CanvasRuler';
 import EditorShell from '@/components/ui/EditorShell';
 import SceneList from '@/components/timeline/SceneList';
 import ElementTimeline from '@/components/timeline/ElementTimeline';
@@ -64,6 +67,9 @@ export default function Editor() {
   const isScene = activeItem && 'elements' in activeItem;
   const isPause = activeItem && !isScene;
 
+  const scenes     = project.timeline.filter((i): i is Scene => 'elements' in i);
+  const sceneIndex = isScene ? scenes.findIndex((s) => s.id === activeItem.id) + 1 : 0;
+
   return (
     <>
       {showExport && (
@@ -93,11 +99,16 @@ export default function Editor() {
 
         {/* Stack central: canvas + timelines */}
         <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          {/* Canvas — área principal */}
+          {/* Canvas — área principal (chrome editorial) */}
           <div
-            className="flex flex-1 items-center justify-center overflow-hidden p-4"
-            style={{ background: 'var(--bg-surface)' }}
+            className="relative flex flex-1 items-center justify-center overflow-hidden p-7"
+            style={{ background: 'var(--bg-void)' }}
           >
+            <ToolStrip />
+            {isScene && <CanvasRuler />}
+            {isScene && (
+              <CanvasStatusBar scene={activeItem as Scene} index={sceneIndex} total={scenes.length} />
+            )}
             <div
               style={{
                 opacity,

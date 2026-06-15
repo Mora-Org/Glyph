@@ -45,6 +45,7 @@
 /* ─── CSS Custom Properties ─────────────────────────────────────────── */
 :root {
   /* Surfaces */
+  --bg-void:        #15192A;
   --bg-deep:        #1A1F33;
   --bg-surface:     #232940;
   --bg-elevated:    #2D344D;
@@ -144,6 +145,7 @@
 
 /* ─── Tailwind theme bridge ─────────────────────────────────────────── */
 @theme inline {
+  --color-bg-void:       var(--bg-void);
   --color-bg-deep:       var(--bg-deep);
   --color-bg-surface:    var(--bg-surface);
   --color-bg-elevated:   var(--bg-elevated);
