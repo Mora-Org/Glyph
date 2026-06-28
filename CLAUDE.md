@@ -87,3 +87,7 @@ npm run test:integration  # Testes de integração
 - Estado do projeto é serializado como JSON (estrutura de cenas)
 - Comandos FFmpeg são construídos via builders em `src/utils/ffmpeg/`
 - Não faça mock de comandos Tauri nos testes de integração — use o real
+
+---
+## Nota de limpeza de disco (Claude / 2026-06-28)
+As pastas recriaveis deste projeto (node_modules, .venv, venv, __pycache__, dist, build, .next, target) podem ter sido removidas para liberar espaco em disco. NAO trate a ausencia delas como problema do projeto -- restaure com o gerenciador de pacotes (npm install / pip install / cargo build). O codigo-fonte e os dados versionados estao intactos.
